@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta — Henkel | SENAI Distrito Tecnológico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8173A;
+    --red-dark: #B5102C;
+    --black: #0A0A0A;
+    --dark: #111111;
+    --dark2: #1A1A1A;
+    --dark3: #242424;
+    --gray: #2E2E2E;
+    --gray2: #3A3A3A;
+    --muted: #6B6B6B;
+    --muted2: #8A8A8A;
+    --light: #E8E8E8;
+    --white: #F5F5F5;
+    --pure: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  /* NAV */
+  nav.topnav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(10,10,10,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-brand { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--muted2); }
+  .nav-brand span { color:var(--red); }
+  .nav-links { display:flex; gap:32px; list-style:none; }
+  .nav-links a { font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .2s; }
+  .nav-links a:hover { color:var(--white); }
+  .nav-badge { font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--red); background:rgba(232,23,58,.12); border:1px solid rgba(232,23,58,.3); padding:5px 14px; border-radius:2px; }
+  /* HERO */
+  .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; position:relative; overflow:hidden; }
+  .hero-left { display:flex; flex-direction:column; justify-content:flex-end; padding:120px 64px 80px; position:relative; z-index:2; }
+  .hero-tag { display:inline-flex; align-items:center; gap:10px; font-size:11px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--muted2); margin-bottom:32px; }
+  .hero-tag::before { content:''; display:block; width:24px; height:1px; background:var(--red); }
+  .hero-client { font-family:'Syne',sans-serif; font-size:clamp(56px,7vw,96px); font-weight:800; line-height:.95; letter-spacing:-.03em; color:var(--pure); margin-bottom:24px; }
+  .hero-client span { color:var(--red); display:block; }
+  .hero-title { font-size:16px; font-weight:300; line-height:1.6; color:var(--muted2); max-width:380px; margin-bottom:48px; }
+  .hero-meta { display:flex; gap:32px; }
+  .hero-meta-item { display:flex; flex-direction:column; gap:4px; }
+  .hero-meta-label { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .hero-meta-value { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:var(--white); }
+  .hero-right { position:relative; overflow:hidden; }
+  .hero-right::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(232,23,58,.15) 0%,transparent 60%); z-index:1; }
+  .hero-bg-text { position:absolute; bottom:-40px; right:-20px; font-family:'Syne',sans-serif; font-size:220px; font-weight:800; color:rgba(255,255,255,.03); letter-spacing:-.05em; line-height:1; user-select:none; z-index:0; }
+  .hero-grid-pattern { position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px); background-size:48px 48px; z-index:0; }
+  .hero-accent { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); width:280px; height:280px; border:1px solid rgba(232,23,58,.2); border-radius:50%; z-index:1; }
+  .hero-accent::before { content:''; position:absolute; top:20px; left:20px; right:20px; bottom:20px; border:1px solid rgba(232,23,58,.1); border-radius:50%; }
+  .hero-number { position:absolute; bottom:80px; right:64px; font-family:'Syne',sans-serif; font-size:128px; font-weight:800; color:rgba(232,23,58,.08); letter-spacing:-.05em; z-index:1; }
+  /* SECTIONS */
+  section { padding:96px 0; border-top:1px solid rgba(255,255,255,.05); }
+  .container { max-width:1200px; margin:0 auto; padding:0 64px; }
+  .section-label { display:flex; align-items:center; gap:12px; font-size:11px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--red); margin-bottom:48px; }
+  .section-label::after { content:''; flex:1; height:1px; background:rgba(232,23,58,.2); }
+  .section-title { font-family:'Syne',sans-serif; font-size:clamp(32px,4vw,52px); font-weight:700; line-height:1.1; letter-spacing:-.02em; color:var(--pure); margin-bottom:24px; }
+  /* CONTEXTO */
+  .context-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+  .context-text { font-size:15px; font-weight:300; color:var(--muted2); line-height:1.8; }
+  .context-text p+p { margin-top:16px; }
+  .context-text strong { color:var(--white); font-weight:500; }
+  .context-highlight { margin-top:32px; padding:24px 28px; background:rgba(232,23,58,.08); border-left:3px solid var(--red); border-radius:0 4px 4px 0; }
+  .context-highlight-value { font-family:'Syne',sans-serif; font-size:36px; font-weight:800; color:var(--red); line-height:1; margin-bottom:4px; }
+  .context-highlight-label { font-size:13px; color:var(--muted2); }
+  .context-diagram { background:var(--dark2); border:1px solid rgba(255,255,255,.08); border-radius:8px; padding:32px; position:relative; overflow:hidden; }
+  .context-diagram::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--red),transparent); }
+  .diagram-title { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:24px; }
+  .diagram-node { display:flex; align-items:center; gap:16px; padding:12px 16px; background:var(--dark3); border:1px solid rgba(255,255,255,.06); border-radius:4px; }
+  .diagram-node+.diagram-node { margin-top:2px; }
+  .diagram-node-icon { width:32px; height:32px; background:rgba(232,23,58,.1); border:1px solid rgba(232,23,58,.2); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .diagram-node-label { font-size:12px; font-weight:500; color:var(--light); }
+  .diagram-node-sub { font-size:11px; color:var(--muted); margin-left:auto; }
+  /* OBJETIVO */
+  #objetivo { background:var(--dark); }
+  .objetivo-inner { display:grid; grid-template-columns:auto 1fr; gap:64px; align-items:center; }
+  .objetivo-number { font-family:'Syne',sans-serif; font-size:160px; font-weight:800; color:rgba(255,255,255,.04); line-height:1; letter-spacing:-.05em; user-select:none; }
+  .objetivo-text { font-size:20px; font-weight:300; line-height:1.7; color:var(--muted2); max-width:640px; }
+  .objetivo-text strong { color:var(--pure); font-weight:500; }
+  /* PREMISSAS */
+  .premissas-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+  .premissa-card { background:var(--dark2); padding:28px 24px; position:relative; overflow:hidden; transition:background .2s; }
+  .premissa-card:hover { background:var(--dark3); }
+  .premissa-card::before { content:''; position:absolute; top:0; left:0; width:2px; height:0; background:var(--red); transition:height .3s ease; }
+  .premissa-card:hover::before { height:100%; }
+  .premissa-number { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:.1em; color:var(--red); margin-bottom:12px; }
+  .premissa-text { font-size:13px; font-weight:300; line-height:1.7; color:var(--muted2); }
+  /* ESCOPO */
+  #escopo { background:var(--dark); }
+  .escopo-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+  .escopo-col { padding:40px; background:var(--dark2); }
+  .escopo-col-title { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; letter-spacing:-.01em; margin-bottom:32px; display:flex; align-items:center; gap:12px; }
+  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .dot.green { background:#22C55E; box-shadow:0 0 8px rgba(34,197,94,.4); }
+  .dot.red { background:var(--red); box-shadow:0 0 8px rgba(232,23,58,.4); }
+  .escopo-list { list-style:none; display:flex; flex-direction:column; }
+  .escopo-item { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px; font-weight:300; line-height:1.6; color:var(--muted2); }
+  .escopo-item::before { content:''; width:4px; height:4px; border-radius:50%; flex-shrink:0; margin-top:8px; }
+  .escopo-col:first-child .escopo-item::before { background:#22C55E; }
+  .escopo-col:last-child .escopo-item::before { background:var(--red); opacity:.6; }
+  /* MACRO */
+  .macro-table { width:100%; border-collapse:collapse; }
+  .macro-table thead tr { background:var(--dark2); }
+  .macro-table th { padding:14px 20px; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); text-align:left; border-bottom:1px solid rgba(255,255,255,.08); }
+  .macro-table td { padding:20px; font-size:13px; font-weight:300; line-height:1.6; color:var(--muted2); border-bottom:1px solid rgba(255,255,255,.04); vertical-align:top; }
+  .macro-table tbody tr:hover { background:rgba(255,255,255,.02); }
+  .macro-num { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:rgba(232,23,58,.25); line-height:1; }
+  .macro-name { font-size:14px; font-weight:500; color:var(--white); margin-bottom:6px; }
+  .trl-row { display:flex; align-items:center; gap:16px; margin-top:40px; padding:28px 32px; background:var(--dark2); border:1px solid rgba(255,255,255,.06); border-radius:4px; }
+  .trl-label { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; min-width:40px; }
+  .trl-badges { display:flex; gap:8px; align-items:center; }
+  .trl-badge { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; padding:6px 14px; border-radius:2px; }
+  .trl-badge.from { background:var(--dark3); color:var(--muted2); border:1px solid var(--gray2); }
+  .trl-badge.to { background:rgba(232,23,58,.15); color:var(--red); border:1px solid rgba(232,23,58,.3); }
+  .trl-arrow { color:var(--muted); font-size:16px; }
+  /* CRONOGRAMA */
+  #cronograma { background:var(--dark); }
+  .gantt { overflow-x:auto; }
+  .gantt-table { width:100%; border-collapse:collapse; min-width:900px; }
+  .gantt-header th { padding:10px 0; font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; border-bottom:1px solid rgba(255,255,255,.06); }
+  .gantt-header th:first-child { text-align:left; padding-left:16px; width:260px; }
+  .gantt-row td { padding:0; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }
+  .gantt-row td:first-child { padding:16px; font-size:12px; font-weight:400; color:var(--muted2); white-space:nowrap; }
+  .gantt-cell { height:40px; position:relative; }
+  .gantt-bar { position:absolute; top:50%; transform:translateY(-50%); height:16px; background:rgba(232,23,58,.25); border-left:2px solid var(--red); border-radius:0 2px 2px 0; }
+  .gantt-bar.mob { background:rgba(255,255,255,.08); border-left-color:rgba(255,255,255,.2); }
+  .gantt-milestone { position:absolute; top:50%; right:6px; transform:translateY(-50%) rotate(45deg); width:10px; height:10px; background:var(--red); }
+  /* RISCOS */
+  .riscos-grid { display:flex; flex-direction:column; gap:2px; }
+  .risco-header-row { display:grid; grid-template-columns:1fr 1fr 100px 140px; background:var(--dark3); border-bottom:1px solid rgba(255,255,255,.08); }
+  .risco-header-cell { padding:12px 24px; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); border-right:1px solid rgba(255,255,255,.04); }
+  .risco-card { display:grid; grid-template-columns:1fr 1fr 100px 140px; background:var(--dark2); transition:background .15s; }
+  .risco-card:hover { background:var(--dark3); }
+  .risco-cell { padding:20px 24px; border-right:1px solid rgba(255,255,255,.04); font-size:13px; font-weight:300; line-height:1.6; color:var(--muted2); }
+  .risco-cell-title { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+  .badge-alto { background:rgba(232,23,58,.15); color:var(--red); border:1px solid rgba(232,23,58,.3); }
+  .badge-medio { background:rgba(234,179,8,.1); color:#EAB308; border:1px solid rgba(234,179,8,.3); }
+  .badge-baixo { background:rgba(34,197,94,.1); color:#22C55E; border:1px solid rgba(34,197,94,.3); }
+  /* ORCAMENTO */
+  #orcamento { background:var(--dark); }
+  .orcamento-layout { display:grid; grid-template-columns:1fr 300px; gap:48px; align-items:start; }
+  .orcamento-table { width:100%; border-collapse:collapse; }
+  .orcamento-table thead tr { background:var(--dark2); }
+  .orcamento-table th { padding:14px 20px; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); text-align:left; border-bottom:1px solid rgba(255,255,255,.08); }
+  .orcamento-table td { padding:16px 20px; font-size:14px; font-weight:300; color:var(--muted2); border-bottom:1px solid rgba(255,255,255,.04); }
+  .orcamento-table td.fonte { font-family:'Syne',sans-serif; font-size:13px; font-weight:500; color:var(--white); letter-spacing:.04em; }
+  .orcamento-table td.valor { font-family:'Syne',sans-serif; font-size:14px; font-weight:600; color:var(--white); }
+  .orcamento-table tr.total-row td { padding-top:20px; border-top:2px solid rgba(255,255,255,.1); border-bottom:none; }
+  .pct-bar-wrap { display:flex; align-items:center; gap:10px; }
+  .pct-bar { flex:1; height:3px; background:var(--dark3); border-radius:2px; overflow:hidden; }
+  .pct-fill { height:100%; background:var(--red); border-radius:2px; }
+  .pct-text { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; color:var(--muted2); min-width:36px; text-align:right; }
+  .orcamento-card { background:var(--dark2); border:1px solid rgba(255,255,255,.06); border-radius:4px; padding:32px 28px; position:sticky; top:100px; }
+  .orcamento-card-label { font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .orcamento-card-value { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--pure); line-height:1.1; margin-bottom:28px; }
+  .donut-wrap { width:130px; height:130px; margin:0 auto 24px; position:relative; }
+  .donut-wrap svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .donut-center { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--white); }
+  .legend { display:flex; flex-direction:column; gap:12px; }
+  .legend-item { display:flex; align-items:center; gap:10px; }
+  .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .legend-name { font-size:12px; color:var(--muted2); flex:1; }
+  .legend-pct { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--white); }
+  /* FOOTER */
+  footer { padding:48px 64px; border-top:1px solid rgba(255,255,255,.06); display:flex; align-items:center; justify-content:space-between; }
+  .footer-brand { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .footer-brand span { color:var(--red); }
+  .footer-info { font-size:12px; color:var(--muted); text-align:center; }
+  .footer-code { font-family:monospace; font-size:11px; color:var(--muted); letter-spacing:.08em; }
+  /* SCROLL BAR */
+  .scroll-progress { position:fixed; top:0; left:0; height:2px; background:var(--red); z-index:200; width:0%; transition:width .1s linear; }
+  /* SIDE NAV */
+  .side-nav { position:fixed; right:24px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:50; }
+  .side-dot { width:5px; height:5px; border-radius:50%; background:var(--gray2); cursor:pointer; transition:all .2s; position:relative; }
+  .side-dot:hover, .side-dot.active { background:var(--red); transform:scale(1.6); }
+  .side-dot::before { content:attr(data-label); position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--white); background:var(--dark2); padding:4px 10px; border-radius:2px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .side-dot:hover::before { opacity:1; }
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  .fade-up { opacity:0; animation:fadeUp .6s ease forwards; }
+  .d1{animation-delay:.1s} .d2{animation-delay:.2s} .d3{animation-delay:.3s} .d4{animation-delay:.4s}
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    nav.topnav{padding:16px 24px}
+    .nav-links{display:none}
+    .container{padding:0 24px}
+    .hero{grid-template-columns:1fr;min-height:auto;padding-top:80px}
+    .hero-right{display:none}
+    .hero-left{padding:48px 24px 64px}
+    .context-grid,.objetivo-inner,.orcamento-layout{grid-template-columns:1fr;gap:40px}
+    .objetivo-number{display:none}
+    .escopo-grid{grid-template-columns:1fr}
+    .premissas-grid{grid-template-columns:1fr}
+    .risco-card,.risco-header-row{grid-template-columns:1fr 1fr}
+    .side-nav{display:none}
+    footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="side-nav" id="sideNav">
+  <div class="side-dot active" data-target="hero" data-label="Início"></div>
+  <div class="side-dot" data-target="contexto" data-label="Contexto"></div>
+  <div class="side-dot" data-target="objetivo" data-label="Objetivo"></div>
+  <div class="side-dot" data-target="premissas" data-label="Premissas"></div>
+  <div class="side-dot" data-target="escopo" data-label="Escopo"></div>
+  <div class="side-dot" data-target="macroentregas" data-label="Entregas"></div>
+  <div class="side-dot" data-target="cronograma" data-label="Cronograma"></div>
+  <div class="side-dot" data-target="riscos" data-label="Riscos"></div>
+  <div class="side-dot" data-target="orcamento" data-label="Orçamento"></div>
+</nav>
+
+<nav class="topnav">
+  <div class="nav-brand"><span>DT</span> · SENAI São Paulo</div>
+  <ul class="nav-links">
+    <li><a href="#contexto">Contexto</a></li>
+    <li><a href="#objetivo">Objetivo</a></li>
+    <li><a href="#escopo">Escopo</a></li>
+    <li><a href="#macroentregas">Entregas</a></li>
+    <li><a href="#orcamento">Orçamento</a></li>
+  </ul>
+  <div class="nav-badge">Pré Proposta</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" style="padding:0;border:none;">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-tag fade-up d1">Pré Proposta · 2025</div>
+      <h1 class="hero-client fade-up d2">HENKEL<span>Brasil</span></h1>
+      <p class="hero-title fade-up d3">Protótipo de sistema para monitoramento da aplicação de cola quente em embalagens</p>
+      <div class="hero-meta fade-up d4">
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Duração</span>
+          <span class="hero-meta-value">15 meses</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">TRL Final</span>
+          <span class="hero-meta-value">6</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Investimento</span>
+          <span class="hero-meta-value">R$751k</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-grid-pattern"></div>
+      <div class="hero-accent"></div>
+      <div class="hero-bg-text">EOL</div>
+      <div class="hero-number">01</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTEXTO -->
+<section id="contexto">
+  <div class="container">
+    <div class="section-label">01 — Contexto</div>
+    <div class="context-grid">
+      <div>
+        <h2 class="section-title">O problema que precisamos resolver</h2>
+        <div class="context-text">
+          <p>O processo de fechamento de embalagens por meio de <strong>cola quente</strong> é uma etapa crítica da linha produtiva, com impacto direto no consumo de insumos, na qualidade do produto final e na geração de perdas operacionais.</p>
+          <p>A ausência de monitoramento estruturado das variáveis de aplicação dificulta o controle do processo, resultando em uso excessivo de adesivo, retrabalho e descarte de embalagens.</p>
+          <p>O projeto propõe o desenvolvimento de um <strong>protótipo de sistema integrado</strong> de automação e software para monitorar a aplicação de cola quente no processo End Of Line.</p>
+          <div class="context-highlight">
+            <div class="context-highlight-value">18 kg</div>
+            <div class="context-highlight-label">de adesivo desperdiçado por turno de 8h</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="context-diagram">
+          <div class="diagram-title">Fluxo do processo monitorado</div>
+          <div class="diagram-node">
+            <div class="diagram-node-icon">📦</div>
+            <div class="diagram-node-label">Contagem de Entrada</div>
+            <div class="diagram-node-sub">Sensor fotoelétrico</div>
+          </div>
+          <div class="diagram-node" style="margin-top:2px">
+            <div class="diagram-node-icon">🌡️</div>
+            <div class="diagram-node-label">Temperatura do Adesivo</div>
+            <div class="diagram-node-sub">Sensor laser</div>
+          </div>
+          <div class="diagram-node" style="margin-top:2px">
+            <div class="diagram-node-icon">💧</div>
+            <div class="diagram-node-label">Flow Meter — Coleiro Nordson</div>
+            <div class="diagram-node-sub">Fluxo de cola</div>
+          </div>
+          <div class="diagram-node" style="margin-top:2px">
+            <div class="diagram-node-icon">👁️</div>
+            <div class="diagram-node-label">Sensor de Aba Aberta</div>
+            <div class="diagram-node-sub">Inspeção visual</div>
+          </div>
+          <div class="diagram-node" style="margin-top:2px;border-left:2px solid #22C55E;">
+            <div class="diagram-node-icon" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3)">✓</div>
+            <div class="diagram-node-label" style="color:#22C55E">Contagem de Saída</div>
+            <div class="diagram-node-sub">Embalagens OK</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OBJETIVO -->
+<section id="objetivo">
+  <div class="container">
+    <div class="section-label">02 — Objetivo</div>
+    <div class="objetivo-inner">
+      <div class="objetivo-number">02</div>
+      <div>
+        <div class="objetivo-text">
+          Desenvolver, em até <strong>15 meses</strong>, um protótipo funcional integrado de automação e software para monitoramento da aplicação de cola quente no processo <strong>End of Line</strong>, permitindo a coleta, visualização e registro de variáveis críticas de processo, com foco na <strong>análise operacional</strong>, controle do uso de insumos e identificação de oportunidades de redução de desperdícios.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREMISSAS -->
+<section id="premissas">
+  <div class="container">
+    <div class="section-label">03 — Premissas</div>
+    <h2 class="section-title" style="margin-bottom:40px">Condições para execução do projeto</h2>
+    <div class="premissas-grid">
+      <div class="premissa-card">
+        <div class="premissa-number">P01</div>
+        <div class="premissa-text">Infraestrutura de nuvem (Azure), incluindo ambientes de homologação e produção, disponibilizada até o <strong style="color:var(--white)">4º mês</strong> e mantida pela Henkel.</div>
+      </div>
+      <div class="premissa-card">
+        <div class="premissa-number">P02</div>
+        <div class="premissa-text">Definições de dados, parâmetros de processo, regras de negócio e critérios operacionais fornecidos pela Henkel até o <strong style="color:var(--white)">3º mês</strong>.</div>
+      </div>
+      <div class="premissa-card">
+        <div class="premissa-number">P03</div>
+        <div class="premissa-text">Aquisição de equipamentos e sensores de responsabilidade exclusiva da Henkel até o <strong style="color:var(--white)">3º mês</strong> de execução.</div>
+      </div>
+      <div class="premissa-card">
+        <div class="premissa-number">P04</div>
+        <div class="premissa-text">Testes do sistema realizados presencialmente no <strong style="color:var(--white)">laboratório da Henkel</strong>.</div>
+      </div>
+      <div class="premissa-card">
+        <div class="premissa-number">P05</div>
+        <div class="premissa-text">Sensores e CLP selecionados considerando a <strong style="color:var(--white)">infraestrutura existente</strong> e condições operacionais da linha.</div>
+      </div>
+      <div class="premissa-card">
+        <div class="premissa-number">P06</div>
+        <div class="premissa-text">Painel de automação projetado exclusivamente para o protótipo, conforme <strong style="color:var(--white)">normas técnicas</strong> aplicáveis.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ESCOPO -->
+<section id="escopo">
+  <div class="container">
+    <div class="section-label">04 — Escopo</div>
+    <h2 class="section-title" style="margin-bottom:40px">O que está dentro e fora do projeto</h2>
+    <div class="escopo-grid">
+      <div class="escopo-col">
+        <div class="escopo-col-title"><span class="dot green"></span>Escopo</div>
+        <ul class="escopo-list">
+          <li class="escopo-item">Protótipo de automação para monitoramento do processo End of Line</li>
+          <li class="escopo-item">Integração de sensores de temperatura, fluxo e contagem</li>
+          <li class="escopo-item">CLP para aquisição e envio contínuo dos dados de processo</li>
+          <li class="escopo-item">Configuração de lógica de controle, limites e alarmes básicos</li>
+          <li class="escopo-item">Desenvolvimento de módulo de software end-of-line</li>
+          <li class="escopo-item">Evolução da arquitetura HLC para suportar modularidade e escalabilidade</li>
+          <li class="escopo-item">Funcionalidades de visualização, histórico e alertas operacionais</li>
+          <li class="escopo-item">Integração com ambiente de nuvem da empresa parceira</li>
+        </ul>
+      </div>
+      <div class="escopo-col" style="background:rgba(232,23,58,.04)">
+        <div class="escopo-col-title"><span class="dot red"></span>Não Escopo</div>
+        <ul class="escopo-list">
+          <li class="escopo-item">Funcionalidades não explicitamente definidas no escopo aprovado</li>
+          <li class="escopo-item">Aquisição, instalação e infraestrutura de equipamentos e rede</li>
+          <li class="escopo-item">Configuração e manutenção de infraestrutura de TI corporativa</li>
+          <li class="escopo-item">Suporte operacional contínuo após a entrega</li>
+          <li class="escopo-item">Integração com sistemas corporativos não previstos</li>
+          <li class="escopo-item">Desenvolvimento de aplicativos móveis ou treinamentos</li>
+          <li class="escopo-item">Modificações estruturais na linha produtiva</li>
+          <li class="escopo-item">Comprovação quantitativa de redução de desperdício</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MACROENTREGAS -->
+<section id="macroentregas">
+  <div class="container">
+    <div class="section-label">05 — Macroentregas</div>
+    <h2 class="section-title" style="margin-bottom:40px">Fases do projeto</h2>
+    <table class="macro-table">
+      <thead>
+        <tr>
+          <th style="width:60px">Nº</th>
+          <th style="width:220px">Macroentrega</th>
+          <th>Detalhamento</th>
+          <th style="width:160px">Área</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="macro-num">01</div></td>
+          <td><div class="macro-name">Refinamento técnico e arquitetura da solução</div></td>
+          <td>Refinamento do escopo, levantamento de variáveis, definição de requisitos funcionais e não funcionais e modelagem da arquitetura integrada. Inclui especificação técnica dos sensores e do controlador industrial.</td>
+          <td><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Software + Automação</span></td>
+        </tr>
+        <tr>
+          <td><div class="macro-num">02</div></td>
+          <td><div class="macro-name">Desenvolvimento do protótipo</div></td>
+          <td>Implementação da coleta de dados em campo, evolução da arquitetura HLC para suportar modularidade e escalabilidade, e desenvolvimento do módulo de software com visualização e alertas.</td>
+          <td><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Software + Automação</span></td>
+        </tr>
+        <tr>
+          <td><div class="macro-num">03</div></td>
+          <td><div class="macro-name">Integração e demonstração em ambiente relevante</div></td>
+          <td>Integração final entre automação e software, implantação em ambiente industrial, testes funcionais, avaliação de desempenho e documentação técnica completa.</td>
+          <td><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Software + Automação</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="trl-row">
+      <span class="trl-label">TRL</span>
+      <div class="trl-badges">
+        <div class="trl-badge from">TRL 4</div>
+        <div class="trl-arrow">→</div>
+        <div class="trl-badge to">TRL 6</div>
+      </div>
+      <div style="flex:1;padding:0 24px;font-size:12px;color:var(--muted);font-weight:300">
+        De conceitos validados de forma isolada até demonstração de protótipo integrado em ambiente industrial relevante.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CRONOGRAMA -->
+<section id="cronograma">
+  <div class="container">
+    <div class="section-label">06 — Cronograma</div>
+    <h2 class="section-title" style="margin-bottom:40px">15 meses de execução</h2>
+    <div class="gantt">
+      <table class="gantt-table">
+        <thead class="gantt-header">
+          <tr>
+            <th>Atividade</th>
+            <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th>
+            <th>M7</th><th>M8</th><th>M9</th><th>M10</th><th>M11</th><th>M12</th>
+            <th>M13</th><th>M14</th><th>M15</th>
+          </tr>
+        </thead>
+        <tbody id="ganttBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- RISCOS -->
+<section id="riscos">
+  <div class="container">
+    <div class="section-label">07 — Matriz de Riscos</div>
+    <h2 class="section-title" style="margin-bottom:40px">Riscos identificados e estratégias</h2>
+    <div class="riscos-grid">
+      <div class="risco-header-row">
+        <div class="risco-header-cell">Risco</div>
+        <div class="risco-header-cell">Consequência</div>
+        <div class="risco-header-cell">Exposição</div>
+        <div class="risco-header-cell">Responsável</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-cell"><div class="risco-cell-title">Identificação</div>Taxa de aquisição de dados incompatível com a velocidade da linha</div>
+        <div class="risco-cell"><div class="risco-cell-title">Consequência</div>Perda de eventos e conclusões incorretas sobre o processo</div>
+        <div class="risco-cell"><div class="risco-cell-title">Nível</div><span class="badge badge-medio">Médio</span></div>
+        <div class="risco-cell"><div class="risco-cell-title">Resp.</div>SENAI</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-cell"><div class="risco-cell-title">Identificação</div>Falha na medição de temperatura do adesivo</div>
+        <div class="risco-cell"><div class="risco-cell-title">Consequência</div>Aplicação incorreta do adesivo e falha no fechamento de embalagens</div>
+        <div class="risco-cell"><div class="risco-cell-title">Nível</div><span class="badge badge-medio">Médio</span></div>
+        <div class="risco-cell"><div class="risco-cell-title">Resp.</div>SENAI</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-cell"><div class="risco-cell-title">Identificação</div>Atraso na liberação de acessos e ambientes em nuvem</div>
+        <div class="risco-cell"><div class="risco-cell-title">Consequência</div>Bloqueio do desenvolvimento, testes e integração do software</div>
+        <div class="risco-cell"><div class="risco-cell-title">Nível</div><span class="badge badge-alto">Alto</span></div>
+        <div class="risco-cell"><div class="risco-cell-title">Resp.</div>HENKEL</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-cell"><div class="risco-cell-title">Identificação</div>Falha na comunicação entre automação e software</div>
+        <div class="risco-cell"><div class="risco-cell-title">Consequência</div>Indisponibilidade de relatórios, alarmes e dados históricos</div>
+        <div class="risco-cell"><div class="risco-cell-title">Nível</div><span class="badge badge-baixo">Baixo</span></div>
+        <div class="risco-cell"><div class="risco-cell-title">Resp.</div>SENAI</div>
+      </div>
+      <div class="risco-card">
+        <div class="risco-cell"><div class="risco-cell-title">Identificação</div>Atraso ou não aquisição de sensores e componentes</div>
+        <div class="risco-cell"><div class="risco-cell-title">Consequência</div>Atraso no cronograma e impacto nas macroentregas</div>
+        <div class="risco-cell"><div class="risco-cell-title">Nível</div><span class="badge badge-medio">Médio</span></div>
+        <div class="risco-cell"><div class="risco-cell-title">Resp.</div>SENAI / HENKEL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORÇAMENTO -->
+<section id="orcamento">
+  <div class="container">
+    <div class="section-label">08 — Orçamento</div>
+    <h2 class="section-title" style="margin-bottom:40px">Investimento por fonte</h2>
+    <div class="orcamento-layout">
+      <table class="orcamento-table">
+        <thead>
+          <tr>
+            <th>Fonte</th>
+            <th>Contrapartida Financeira</th>
+            <th>Contrapartida Econômica</th>
+            <th>Participação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fonte">EMBRAPII</td>
+            <td class="valor">R$ 247.907,54</td>
+            <td style="color:var(--muted)">—</td>
+            <td><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-fill" style="width:33%"></div></div><span class="pct-text">33%</span></div></td>
+          </tr>
+          <tr>
+            <td class="fonte">SENAI</td>
+            <td style="color:var(--muted)">—</td>
+            <td class="valor">R$ 202.832,62</td>
+            <td><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-fill" style="width:27%;background:rgba(255,255,255,.35)"></div></div><span class="pct-text">27%</span></div></td>
+          </tr>
+          <tr>
+            <td class="fonte">HENKEL</td>
+            <td class="valor">R$ 300.492,77</td>
+            <td style="color:var(--muted)">—</td>
+            <td><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-fill" style="width:40%"></div></div><span class="pct-text">40%</span></div></td>
+          </tr>
+          <tr class="total-row">
+            <td class="fonte" style="font-size:16px;color:var(--pure)">Total</td>
+            <td class="valor" style="font-size:20px;color:var(--red)" colspan="3">R$ 751.232,93</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="orcamento-card">
+        <div class="orcamento-card-label">Investimento total</div>
+        <div class="orcamento-card-value">R$ 751.232</div>
+        <div class="donut-wrap">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#1a1a1a" stroke-width="16"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#E8173A" stroke-width="16" stroke-dasharray="78.8 238.76" stroke-dashoffset="0"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#8B0F22" stroke-width="16" stroke-dasharray="95.5 222.06" stroke-dashoffset="-78.8"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#3A3A3A" stroke-width="16" stroke-dasharray="64.46 253.1" stroke-dashoffset="-174.3"/>
+          </svg>
+          <div class="donut-center">100%</div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#E8173A"></div><span class="legend-name">EMBRAPII</span><span class="legend-pct">33%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8B0F22"></div><span class="legend-name">HENKEL</span><span class="legend-pct">40%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3A3A3A;border:1px solid #555"></div><span class="legend-name">SENAI</span><span class="legend-pct">27%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand"><span>DT</span> · SENAI São Paulo · Distrito Tecnológico</div>
+  <div class="footer-info">Proposta gerada em março de 2025<br><span style="color:var(--red)">Henkel Brasil</span> · Protótipo EOL</div>
+  <div class="footer-code">#1370 · PRÉ-PROPOSTA</div>
+</footer>
+
+<script>
+// Scroll progress
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (window.scrollY / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('scrollProgress').style.width = pct + '%';
+});
+
+// Side nav
+const sections = ['hero','contexto','objetivo','premissas','escopo','macroentregas','cronograma','riscos','orcamento'];
+const dots = document.querySelectorAll('.side-dot');
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const el = document.getElementById(dot.dataset.target);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const i = sections.indexOf(e.target.id);
+      dots.forEach(d => d.classList.remove('active'));
+      if (dots[i]) dots[i].classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
+
+// Gantt
+const ganttData = [
+  { label: 'Mobilização Interna', start: 1, end: 1, mob: true },
+  { label: '01. Refinamento técnico', start: 2, end: 4, milestone: 4 },
+  { label: '02. Desenvolvimento do protótipo', start: 4, end: 12, milestone: 12 },
+  { label: '03. Integração e demonstração', start: 12, end: 15, milestone: 15 },
+];
+const body = document.getElementById('ganttBody');
+ganttData.forEach(item => {
+  const tr = document.createElement('tr');
+  tr.className = 'gantt-row';
+  const tdL = document.createElement('td');
+  tdL.textContent = item.label;
+  tr.appendChild(tdL);
+  for (let m = 1; m <= 15; m++) {
+    const td = document.createElement('td');
+    const cell = document.createElement('div');
+    cell.className = 'gantt-cell';
+    if (m >= item.start && m <= item.end) {
+      const bar = document.createElement('div');
+      bar.className = 'gantt-bar' + (item.mob ? ' mob' : '');
+      bar.style.left = m === item.start ? '10%' : '0';
+      bar.style.right = m === item.end ? '10%' : '0';
+      if (m !== item.start) bar.style.borderLeft = 'none';
+      cell.appendChild(bar);
+    }
+    if (item.milestone === m) {
+      const ms = document.createElement('div');
+      ms.className = 'gantt-milestone';
+      cell.appendChild(ms);
+    }
+    td.appendChild(cell);
+    tr.appendChild(td);
+  }
+  body.appendChild(tr);
+});
+</script>
+</body>
+</html>

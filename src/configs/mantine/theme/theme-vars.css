@@ -1,0 +1,97 @@
+/* ================================================================
+   Theme Design Tokens – CSS Custom Properties
+   Auto-generated from theme.tokens.ts values.
+   Imported once in the root layout so every CSS module can use them.
+   ================================================================ */
+
+:root {
+  /* ── Font sizes (responsive clamp) ─────── */
+  --font-4xl: clamp(36px, 2.2vw, 80px);
+  --font-xxxl: clamp(30px, 2vw, 64px);
+  --font-xxl: clamp(24px, 1.8vw, 52px);
+  --font-xl: clamp(20px, 1.5vw, 40px);
+  --font-l: clamp(18px, 1.3vw, 32px);
+  --font-m: clamp(16px, 1.1vw, 28px);
+  --font-s: clamp(14px, 0.95vw, 20px);
+  --font-xs: clamp(12px, 0.8vw, 18px);
+  --font-xxs: clamp(10px, 0.7vw, 14px);
+  --font-xxxs: clamp(8px, 0.6vw, 12px);
+
+  /* ── Line heights ──────────────────────── */
+  --lh-4xl: 1.25;
+  --lh-xxxl: 1.333;
+  --lh-xxl: 1.41;
+  --lh-xl: 1.41;
+  --lh-l: 1.5;
+  --lh-m: 1.55;
+  --lh-s: 1.5;
+  --lh-xs: 1.42;
+  --lh-xxs: 1.5;
+  --lh-xxxs: 1.4;
+
+  /* ── Spacing ───────────────────────────── */
+  --space-none: 0px;
+  --space-4xs: 2px;
+  --space-xxxs: 4px;
+  --space-xxs: 8px;
+  --space-xs: 12px;
+  --space-s: 16px;
+  --space-m: 24px;
+  --space-l: 32px;
+  --space-xl: 48px;
+  --space-xxl: 64px;
+  --space-xxxl: 80px;
+  --space-4xl: 96px;
+
+  /* ── Radius ────────────────────────────── */
+  --radius-none: 0px;
+  --radius-4xs: 2px;
+  --radius-xxxs: 4px;
+  --radius-xxs: 8px;
+  --radius-xs: 12px;
+  --radius-s: 16px;
+  --radius-m: 24px;
+  --radius-l: 32px;
+  --radius-xl: 48px;
+  --radius-full: 1000px;
+
+  /* ── Colors – Primary ──────────────────── */
+  --color-primary-0: #FFF1F2;
+  --color-primary-1: #FFE4E7;
+  --color-primary-2: #FECDD4;
+  --color-primary-3: #FDA4B1;
+  --color-primary-4: #FB7188;
+  --color-primary-5: #F43F61;
+  --color-primary-6: #DD1C4A;
+  --color-primary-7: #BE1240;
+  --color-primary-8: #9F123C;
+  --color-primary-9: #88133D;
+  --color-primary-10: #4C051A;
+
+  /* ── Colors – Neutral Light ────────────── */
+  --color-neutral-light-0: #FFFFFF;
+  --color-neutral-light-1: #FCFCFC;
+  --color-neutral-light-2: #F5F5F5;
+  --color-neutral-light-3: #EDEDED;
+  --color-neutral-light-4: #E0E0E0;
+  --color-neutral-light-5: #D6D6D6;
+  --color-neutral-light-6: #CCCCCC;
+  --color-neutral-light-7: #B8B8B8;
+  --color-neutral-light-8: #A5A5A5;
+  --color-neutral-light-9: #A1A1A1;
+  --color-neutral-light-10: #9B9B9B;
+
+  /* ── Colors – Neutral Dark ─────────────── */
+  --color-neutral-dark-0: #121013;
+  --color-neutral-dark-1: #161419;
+  --color-neutral-dark-2: #1D1C22;
+  --color-neutral-dark-3: #1E1E23;
+  --color-neutral-dark-4: #222329;
+  --color-neutral-dark-5: #26282E;
+  --color-neutral-dark-6: #2A2D34;
+  --color-neutral-dark-7: #2D3139;
+  --color-neutral-dark-8: #31363F;
+  --color-neutral-dark-9: #353B44;
+  --color-neutral-dark-10: #39404A;
+  --color-neutral-dark-11: #3D454F;
+}

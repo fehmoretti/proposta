@@ -1,0 +1,37 @@
+{
+  "name": "land-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write ."
+  },
+  "packageManager": "pnpm@10.30.2",
+  "dependencies": {
+    "@mantine/core": "^8.3.15",
+    "@mantine/form": "^8.3.15",
+    "@mantine/hooks": "^8.3.15",
+    "@mantine/modals": "^8.3.15",
+    "@mantine/notifications": "^8.3.15",
+    "@tabler/icons-react": "^3.38.0",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^10.0.2",
+    "eslint-config-next": "^16.1.6",
+    "postcss": "^8.5.8",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5.9.3"
+  }
+}
