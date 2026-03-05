@@ -164,7 +164,7 @@
 /* -- Stats Row -- */
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-s);
   margin-bottom: var(--space-l);
 }

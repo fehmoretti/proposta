@@ -35,7 +35,7 @@ export function SectionCard({
         onClick={() => setOpen((prev) => !prev)}
       >
         <div className={styles.sectionCardHeaderIcon}>{icon}</div>
-        <h3 className={styles.sectionCardTitle}>{title}</h3>
+        <h4 className={styles.sectionCardTitle}>{title}</h4>
         {count !== undefined && (
           <span className={styles.sectionCardCount}>
             {count} {count === 1 ? 'item' : 'itens'}

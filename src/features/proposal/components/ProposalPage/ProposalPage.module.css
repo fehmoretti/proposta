@@ -16,11 +16,17 @@
 
   background: var(--black);
   color: var(--white);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   line-height: 1.7;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+.root strong,
+.root b {
+  color: var(--pure);
+  font-weight: 700;
 }
 
 /* ========== Scroll Progress ========== */
@@ -459,11 +465,13 @@
   justify-content: center;
   font-size: 14px;
   flex-shrink: 0;
+  color: var(--red);
 }
 
 .diagramNodeIconSuccess {
   background: rgba(34, 197, 94, 0.1);
   border-color: rgba(34, 197, 94, 0.3);
+  color: var(--mantine-color-success-6);
 }
 
 .diagramNodeLabel {

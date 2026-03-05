@@ -12,14 +12,6 @@ export interface ProposalRecord {
   data: ProposalFormData;
 }
 
-/* ── Keys ────────────────────────────────── */
-
-const INDEX_KEY = 'proposals-index';
-
-function storageKey(slug: string) {
-  return `proposal-${slug}`;
-}
-
 /* ── Slug helpers ────────────────────────── */
 
 export function toSlug(text: string): string {
@@ -39,47 +31,47 @@ function ensureUniqueSlug(slug: string, existingSlugs: string[]): string {
   return `${slug}-${i}`;
 }
 
-/* ── Index (list of slugs) ───────────────── */
+/* ── Name split helper ───────────────────── */
 
-export function listSlugs(): string[] {
-  if (typeof window === 'undefined') return [];
+export function splitClientName(fullName: string): { main: string; accent: string } {
+  const parts = fullName.trim().split(/\s+/);
+  const main = (parts[0] ?? '').toUpperCase();
+  const accent = parts.slice(1).join(' ');
+  return { main, accent };
+}
+
+/* ── API-based CRUD ──────────────────────── */
+
+const API = '/api/proposals';
+
+export async function listProposals(): Promise<ProposalRecord[]> {
   try {
-    const raw = localStorage.getItem(INDEX_KEY);
-    return raw ? (JSON.parse(raw) as string[]) : [];
+    const res = await fetch(API);
+    if (!res.ok) return [];
+    return (await res.json()) as ProposalRecord[];
   } catch {
     return [];
   }
 }
 
-function saveSlugs(slugs: string[]) {
-  localStorage.setItem(INDEX_KEY, JSON.stringify(slugs));
-}
-
-/* ── CRUD ────────────────────────────────── */
-
-export function listProposals(): ProposalRecord[] {
-  const slugs = listSlugs();
-  return slugs
-    .map((s) => getProposal(s))
-    .filter((r): r is ProposalRecord => r !== null);
-}
-
-export function getProposal(slug: string): ProposalRecord | null {
-  if (typeof window === 'undefined') return null;
+export async function getProposal(slug: string): Promise<ProposalRecord | null> {
   try {
-    const raw = localStorage.getItem(storageKey(slug));
-    if (!raw) return null;
-    return JSON.parse(raw) as ProposalRecord;
+    const res = await fetch(`${API}/${slug}`);
+    if (!res.ok) return null;
+    return (await res.json()) as ProposalRecord;
   } catch {
     return null;
   }
 }
 
-export function createProposal(title: string, clientName: string): ProposalRecord {
-  const slugs = listSlugs();
+export async function createProposal(title: string, clientName: string): Promise<ProposalRecord> {
+  const all = await listProposals();
+  const existingSlugs = all.map((p) => p.slug);
   const baseSlug = toSlug(title || clientName || 'proposta');
-  const slug = ensureUniqueSlug(baseSlug, slugs);
+  const slug = ensureUniqueSlug(baseSlug, existingSlugs);
   const now = new Date().toISOString();
+
+  const { main, accent } = splitClientName(clientName);
 
   const record: ProposalRecord = {
     slug,
@@ -89,45 +81,63 @@ export function createProposal(title: string, clientName: string): ProposalRecor
     updatedAt: now,
     data: {
       ...DEFAULT_PROPOSAL,
-      clientName,
+      clientName: main,
+      clientNameAccent: accent,
       heroTitle: title,
+      heroTag: `Pré proposta · ${new Date().getFullYear()}`,
     },
   };
 
-  localStorage.setItem(storageKey(slug), JSON.stringify(record));
-  saveSlugs([...slugs, slug]);
+  await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(record),
+  });
+
   return record;
 }
 
-export function saveProposal(slug: string, data: ProposalFormData): ProposalRecord | null {
-  const existing = getProposal(slug);
+export async function saveProposal(slug: string, data: ProposalFormData): Promise<ProposalRecord | null> {
+  const existing = await getProposal(slug);
   if (!existing) return null;
+
+  /* Auto-split clientName → main + accent */
+  const { main, accent } = splitClientName(data.clientName);
+  const patchedData: ProposalFormData = {
+    ...data,
+    clientName: main,
+    clientNameAccent: accent,
+  };
 
   const updated: ProposalRecord = {
     ...existing,
-    title: data.heroTitle || existing.title,
+    title: patchedData.heroTitle || existing.title,
     clientName: data.clientName || existing.clientName,
     updatedAt: new Date().toISOString(),
-    data,
+    data: patchedData,
   };
 
-  localStorage.setItem(storageKey(slug), JSON.stringify(updated));
+  await fetch(`${API}/${slug}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updated),
+  });
+
   return updated;
 }
 
-export function deleteProposal(slug: string): void {
-  localStorage.removeItem(storageKey(slug));
-  const slugs = listSlugs().filter((s) => s !== slug);
-  saveSlugs(slugs);
+export async function deleteProposal(slug: string): Promise<void> {
+  await fetch(`${API}/${slug}`, { method: 'DELETE' });
 }
 
-export function duplicateProposal(slug: string): ProposalRecord | null {
-  const original = getProposal(slug);
+export async function duplicateProposal(slug: string): Promise<ProposalRecord | null> {
+  const original = await getProposal(slug);
   if (!original) return null;
 
-  const slugs = listSlugs();
+  const all = await listProposals();
+  const existingSlugs = all.map((p) => p.slug);
   const baseSlug = toSlug(`${original.title}-copia`);
-  const newSlug = ensureUniqueSlug(baseSlug, slugs);
+  const newSlug = ensureUniqueSlug(baseSlug, existingSlugs);
   const now = new Date().toISOString();
 
   const record: ProposalRecord = {
@@ -138,7 +148,11 @@ export function duplicateProposal(slug: string): ProposalRecord | null {
     updatedAt: now,
   };
 
-  localStorage.setItem(storageKey(newSlug), JSON.stringify(record));
-  saveSlugs([...slugs, newSlug]);
+  await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(record),
+  });
+
   return record;
 }

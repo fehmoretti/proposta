@@ -25,9 +25,9 @@ export const theme = createTheme({
     dark: asTuple(THEME_COLORS.neutralDark),
   },
 
-  fontFamily: "'DM Sans', sans-serif",
+  fontFamily: "'Montserrat', sans-serif",
   headings: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "'Montserrat', sans-serif",
     fontWeight: '700',
   },
 
@@ -63,7 +63,7 @@ export const proposalTheme = createTheme({
     primary: asTuple(THEME_COLORS.primary),
     dark: asTuple(THEME_COLORS.neutralDark),
   },
-  fontFamily: "'DM Sans', sans-serif",
+  fontFamily: "'Montserrat', sans-serif",
   headings: {
     fontFamily: "'Syne', sans-serif",
     fontWeight: '700',

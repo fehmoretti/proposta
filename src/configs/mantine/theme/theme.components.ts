@@ -39,7 +39,7 @@ const inputLikeStyles: ComponentStylesFn<InputProps> = (_theme, params) => {
       color: THEME_COLORS.neutralLight[8],
     },
     input: {
-      background: 'transparent',
+      background: '#0000001a',
       height: 'fit-content',
       color: THEME_COLORS.neutralLight[0],
       fontSize: config?.font?.fontSize,
@@ -48,9 +48,6 @@ const inputLikeStyles: ComponentStylesFn<InputProps> = (_theme, params) => {
       paddingBottom: config?.padding?.bottom,
       ...(!hasLeft && { paddingLeft: config?.padding?.left }),
       ...(!hasRight && { paddingRight: config?.padding?.right }),
-      '&::placeholder': {
-        color: THEME_COLORS.neutralLight[6],
-      },
     },
   };
 };
@@ -76,9 +73,6 @@ const textareaStyles: ComponentStylesFn<InputProps> = (_theme, params) => {
       paddingBottom: config.padding.bottom,
       paddingLeft: config.padding.left,
       paddingRight: config.padding.right,
-      '&::placeholder': {
-        color: THEME_COLORS.neutralLight[6],
-      },
     },
   };
 };

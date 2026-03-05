@@ -94,4 +94,34 @@
   --color-neutral-dark-9: #353B44;
   --color-neutral-dark-10: #39404A;
   --color-neutral-dark-11: #3D454F;
+
+  /* ── Mantine overrides ─────────────────── */
+  --mantine-color-placeholder: #b2b2b9;
+  --mantine-color-default-border: #434349;
+  --mantine-color-default: #0000001a;
+}
+
+[data-mantine-color-scheme="dark"] {
+  --mantine-color-placeholder: #b2b2b9;
+  --mantine-color-default-border: #434349;
+  --mantine-color-default: #0000001a;
+}
+
+/* ── Placeholder color for all Mantine inputs ── */
+.mantine-Input-input::placeholder,
+.mantine-Textarea-input::placeholder,
+.mantine-NumberInput-input::placeholder,
+.mantine-Select-input::placeholder,
+.mantine-TextInput-input::placeholder {
+  color: #b2b2b9 !important;
+  opacity: 1;
+}
+
+/* ── Input background ── */
+.mantine-Input-input,
+.mantine-Textarea-input,
+.mantine-NumberInput-input,
+.mantine-Select-input,
+.mantine-TextInput-input {
+  background-color: #0000001a !important;
 }

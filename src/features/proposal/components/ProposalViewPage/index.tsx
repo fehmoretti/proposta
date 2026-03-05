@@ -17,12 +17,13 @@ export function ProposalViewPage({ slug }: Props) {
   const [exists, setExists] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const record = getProposal(slug);
-    if (!record) {
-      setExists(false);
-    } else {
-      setExists(true);
-    }
+    let cancelled = false;
+    (async () => {
+      const record = await getProposal(slug);
+      if (cancelled) return;
+      setExists(!!record);
+    })();
+    return () => { cancelled = true; };
   }, [slug]);
 
   if (exists === null) return null;

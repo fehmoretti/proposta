@@ -1,0 +1,55 @@
+.editor {
+  border: calc(0.0625rem * var(--mantine-scale)) solid #434349;
+  border-radius: var(--mantine-radius-sm);
+  background: #0000001a;
+  --mantine-color-body: transparent;
+}
+
+.toolbar {
+  background: transparent;
+  border-bottom: calc(0.0625rem * var(--mantine-scale)) solid #434349;
+  padding: 4px 8px;
+  min-height: unset;
+}
+
+.toolbar :global(.mantine-RichTextEditor-control) {
+  background: transparent;
+  border: calc(0.0625rem * var(--mantine-scale)) solid transparent;
+  color: #b2b2b9;
+}
+
+.toolbar :global(.mantine-RichTextEditor-control:hover) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f5f5f5;
+}
+
+.toolbar :global(.mantine-RichTextEditor-control[data-active]) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f5;
+}
+
+.content {
+  background: transparent;
+  min-height: 80px;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-text);
+}
+
+.content :global(.tiptap) {
+  padding: 8px 12px;
+  min-height: 80px;
+  color: #f5f5f5;
+}
+
+.content :global(.tiptap mark) {
+  background-color: rgba(255, 224, 102, 0.3);
+  color: inherit;
+}
+
+.content :global(.tiptap p.is-editor-empty:first-child::before) {
+  color: #b2b2b9;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

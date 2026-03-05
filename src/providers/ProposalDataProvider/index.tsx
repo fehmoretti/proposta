@@ -31,20 +31,25 @@ export function ProposalDataProvider({ slug, children }: ProposalDataProviderPro
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (slug) {
-      const record = getProposal(slug);
-      if (record) {
-        setData({ ...DEFAULT_PROPOSAL, ...record.data });
+    let cancelled = false;
+    (async () => {
+      if (slug) {
+        const record = await getProposal(slug);
+        if (cancelled) return;
+        if (record) {
+          setData({ ...DEFAULT_PROPOSAL, ...record.data });
+        }
       }
-    }
-    setHydrated(true);
+      setHydrated(true);
+    })();
+    return () => { cancelled = true; };
   }, [slug]);
 
   const updateData = useCallback(
     (next: ProposalFormData) => {
       setData(next);
       if (slug) {
-        saveProposal(slug, next);
+        void saveProposal(slug, next);
       }
     },
     [slug],

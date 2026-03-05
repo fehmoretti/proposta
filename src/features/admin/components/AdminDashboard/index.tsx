@@ -16,6 +16,16 @@ import {
   duplicateProposal,
   type ProposalRecord,
 } from '@/features/proposal/services/proposal-storage';
+import {
+  IconFileText,
+  IconBuilding,
+  IconCalendar,
+  IconClipboardList,
+  IconExternalLink,
+  IconCopy,
+  IconTrash,
+  IconCheck,
+} from '@tabler/icons-react';
 import styles from './AdminDashboard.module.css';
 
 function formatDate(iso: string) {
@@ -36,8 +46,11 @@ export function AdminDashboard() {
   const [toast, setToast] = useState('');
 
   useEffect(() => {
-    setProposals(listProposals());
-    setHydrated(true);
+    (async () => {
+      const all = await listProposals();
+      setProposals(all);
+      setHydrated(true);
+    })();
   }, []);
 
   const showToast = (msg: string) => {
@@ -45,10 +58,10 @@ export function AdminDashboard() {
     setTimeout(() => setToast(''), 3000);
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!newTitle.trim() && !newClient.trim()) return;
-    const record = createProposal(newTitle.trim(), newClient.trim());
-    setProposals(listProposals());
+    const record = await createProposal(newTitle.trim(), newClient.trim());
+    setProposals(await listProposals());
     setShowCreate(false);
     setNewTitle('');
     setNewClient('');
@@ -56,17 +69,17 @@ export function AdminDashboard() {
     router.push(`/admin/${record.slug}`);
   };
 
-  const handleDelete = (slug: string, title: string) => {
+  const handleDelete = async (slug: string, title: string) => {
     if (!confirm(`Excluir a proposta "${title}"?`)) return;
-    deleteProposal(slug);
-    setProposals(listProposals());
+    await deleteProposal(slug);
+    setProposals(await listProposals());
     showToast('Proposta excluída');
   };
 
-  const handleDuplicate = (slug: string) => {
-    const copy = duplicateProposal(slug);
+  const handleDuplicate = async (slug: string) => {
+    const copy = await duplicateProposal(slug);
     if (copy) {
-      setProposals(listProposals());
+      setProposals(await listProposals());
       showToast(`Cópia criada: "${copy.title}"`);
     }
   };
@@ -88,7 +101,7 @@ export function AdminDashboard() {
 
           <nav className={styles.sidebarNav}>
             <div className={`${styles.sidebarItem} ${styles.sidebarItemActive}`}>
-              <div className={styles.sidebarItemIcon}>📄</div>
+              <div className={styles.sidebarItemIcon}><IconFileText size={18} /></div>
               <span className={styles.sidebarItemLabel}>Propostas</span>
             </div>
           </nav>
@@ -124,14 +137,14 @@ export function AdminDashboard() {
             {/* Stats */}
             <div className={styles.statsRow}>
               <div className={styles.statCard}>
-                <div className={styles.statIcon}>📄</div>
+                <div className={styles.statIcon}><IconFileText size={22} /></div>
                 <div>
                   <p className={styles.statValue}>{proposals.length}</p>
                   <p className={styles.statLabel}>Propostas</p>
                 </div>
               </div>
               <div className={styles.statCard}>
-                <div className={styles.statIcon}>🏢</div>
+                <div className={styles.statIcon}><IconBuilding size={22} /></div>
                 <div>
                   <p className={styles.statValue}>
                     {new Set(proposals.map((p) => p.clientName)).size}
@@ -139,27 +152,12 @@ export function AdminDashboard() {
                   <p className={styles.statLabel}>Empresas</p>
                 </div>
               </div>
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}>📅</div>
-                <div>
-                  <p className={styles.statValue}>
-                    {proposals.length > 0
-                      ? formatDate(
-                          proposals.reduce((a, b) =>
-                            a.updatedAt > b.updatedAt ? a : b,
-                          ).updatedAt,
-                        )
-                      : '—'}
-                  </p>
-                  <p className={styles.statLabel}>Última atualização</p>
-                </div>
-              </div>
             </div>
 
             {/* Proposals List */}
             {proposals.length === 0 ? (
               <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>📋</div>
+                <div className={styles.emptyIcon}><IconClipboardList size={48} /></div>
                 <h3 className={styles.emptyTitle}>Nenhuma proposta criada</h3>
                 <p className={styles.emptyText}>
                   Crie sua primeira pré-proposta para começar.
@@ -176,7 +174,7 @@ export function AdminDashboard() {
                       className={styles.proposalIcon}
                       onClick={() => router.push(`/admin/${p.slug}`)}
                     >
-                      📄
+                      <IconFileText size={20} />
                     </div>
                     <div
                       className={styles.proposalInfo}
@@ -204,7 +202,7 @@ export function AdminDashboard() {
                           href={`/${p.slug}`}
                           target="_blank"
                         >
-                          🔗
+                          <IconExternalLink size={16} />
                         </ActionIcon>
                       </Tooltip>
                       <Tooltip label="Duplicar">
@@ -213,7 +211,7 @@ export function AdminDashboard() {
                           color="gray"
                           onClick={() => handleDuplicate(p.slug)}
                         >
-                          📋
+                          <IconCopy size={16} />
                         </ActionIcon>
                       </Tooltip>
                       <Tooltip label="Excluir">
@@ -222,7 +220,7 @@ export function AdminDashboard() {
                           color="red"
                           onClick={() => handleDelete(p.slug, p.title)}
                         >
-                          🗑️
+                          <IconTrash size={16} />
                         </ActionIcon>
                       </Tooltip>
                     </div>
@@ -268,7 +266,7 @@ export function AdminDashboard() {
       {/* Toast */}
       {toast && (
         <div className={styles.toast}>
-          <span className={styles.toastIcon}>✓</span>
+          <span className={styles.toastIcon}><IconCheck size={16} /></span>
           {toast}
         </div>
       )}

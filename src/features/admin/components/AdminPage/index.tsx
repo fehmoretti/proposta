@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   TextInput,
-  Textarea,
   NumberInput,
   Select,
   Switch,
@@ -21,6 +20,7 @@ import {
   deleteProposal,
 } from '@/features/proposal/services/proposal-storage';
 import type {
+  DiagramNode,
   EscopoItem,
   MacroatividadeForm,
   PremissaForm,
@@ -44,8 +44,16 @@ import {
   IconX,
   IconCheck,
 } from '@tabler/icons-react';
+import { DIAGRAM_ICONS, DIAGRAM_ICON_MAP } from '@/features/proposal/constants/diagram-icons';
 import { SectionCard } from './SectionCard';
+import { RichTextArea } from '../RichTextArea';
 import styles from './AdminPage.module.css';
+
+/* ── Diagram icon select data ───────────── */
+const DIAGRAM_ICON_OPTIONS = DIAGRAM_ICONS.map((i) => ({
+  value: i.value,
+  label: i.label,
+}));
 
 /* ── Select option data ─────────────────── */
 
@@ -148,15 +156,20 @@ export function AdminPage({ slug }: AdminPageProps) {
 
   /* ── Load from storage on mount ────────── */
   useEffect(() => {
-    const record = getProposal(slug);
-    if (!record) {
-      router.replace('/admin');
-      return;
-    }
-    const merged = { ...DEFAULT_PROPOSAL, ...record.data };
-    setSavedData(merged);
-    setForm(merged);
-    setLoaded(true);
+    let cancelled = false;
+    (async () => {
+      const record = await getProposal(slug);
+      if (cancelled) return;
+      if (!record) {
+        router.replace('/admin');
+        return;
+      }
+      const merged = { ...DEFAULT_PROPOSAL, ...record.data };
+      setSavedData(merged);
+      setForm(merged);
+      setLoaded(true);
+    })();
+    return () => { cancelled = true; };
   }, [slug, router]);
 
   const isDirty = useMemo(
@@ -173,8 +186,8 @@ export function AdminPage({ slug }: AdminPageProps) {
   );
 
   /* ── Persist / Reset ──────────────────── */
-  const handleSave = () => {
-    const updated = saveProposal(slug, form);
+  const handleSave = async () => {
+    const updated = await saveProposal(slug, form);
     if (updated) {
       setSavedData(form);
       setSaved(true);
@@ -182,9 +195,9 @@ export function AdminPage({ slug }: AdminPageProps) {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!confirm('Excluir esta proposta permanentemente?')) return;
-    deleteProposal(slug);
+    await deleteProposal(slug);
     router.push('/admin');
   };
 
@@ -302,7 +315,7 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* Seção 1 — Identificação da Proposta   */}
             {/* ═════════════════════════════════════ */}
             <SectionCard id="sec-1" icon={<IconBuilding size={20} />} title="Seção 1 — Identificação da Proposta" defaultOpen>
-              <div className={styles.fieldGrid}>
+              <div className={styles.fieldGrid3}>
                 <TextInput
                   label="1.1 — Nome da empresa parceira"
                   placeholder="Ex: Henkel Brasil"
@@ -345,58 +358,201 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* Seção 2 — Contexto e Problema         */}
             {/* ═════════════════════════════════════ */}
             <SectionCard id="sec-2" icon={<IconClipboardList size={20} />} title="Seção 2 — Contexto e Problema">
+              <div className={styles.fieldGrid1}>
+                <RichTextArea
+                  label="2.1 — Qual é o processo ou operação da empresa que apresenta o problema?"
+                  placeholder="Ex: Linha de embalagem End-of-Line com aplicação de cola quente"
+                  withAsterisk
+                  value={form.processoOperacao}
+                  onChange={(val) => set('processoOperacao', val)}
+                />
+                <RichTextArea
+                  label="2.2 — Quais são os desafios atuais enfrentados nesse processo?"
+                  placeholder="Ex: Falta de controle sobre a quantidade de adesivo aplicado, gerando desperdício e retrabalho"
+                  withAsterisk
+                  value={form.desafiosAtuais}
+                  onChange={(val) => set('desafiosAtuais', val)}
+                />
+                <RichTextArea
+                  label="2.3 — Quais são os impactos mensuráveis do problema?"
+                  description="Ex: desperdício, retrabalho, erros"
+                  placeholder="Ex: Desperdício de 18 kg de adesivo por turno de 8h, gerando custos adicionais de R$ X/mês"
+                  value={form.impactosMensuraveis}
+                  onChange={(val) => set('impactosMensuraveis', val)}
+                />
+              </div>
+              <div className={styles.fieldGrid3}>
+                <TextInput
+                  label="Destaque — Valor"
+                  description="Número ou métrica principal do bloco de destaque"
+                  placeholder="Ex: 18 kg"
+                  value={form.contextoHighlightValue}
+                  onChange={(e) => set('contextoHighlightValue', e.currentTarget.value)}
+                />
+                <TextInput
+                  label="Destaque — Descrição"
+                  description="Texto complementar do destaque"
+                  placeholder="Ex: de adesivo desperdiçado por turno de 8h"
+                  value={form.contextoHighlightLabel}
+                  onChange={(e) => set('contextoHighlightLabel', e.currentTarget.value)}
+                />
+                <Switch
+                  label="2.4 — Existe alguma solução prévia já desenvolvida ou testada?"
+                  checked={form.existeSolucaoPrevia}
+                  onChange={(e) => set('existeSolucaoPrevia', e.currentTarget.checked)}
+                  size="md"
+                  mt="auto"
+                />
+              </div>
+              {form.existeSolucaoPrevia && (
+                <div className={styles.fieldGrid1}>
+                  <RichTextArea
+                    label="2.5 — Descreva o que já foi feito e quais limitações foram identificadas"
+                    description="Visível somente quando 2.4 = Sim"
+                    placeholder="Ex: Foi testada uma solução manual de pesagem, mas sem integração com o sistema de controle"
+                    value={form.descricaoSolucaoPrevia}
+                    onChange={(val) => set('descricaoSolucaoPrevia', val)}
+                  />
+                </div>
+              )}
+
+              {/* ── Diagrama de fluxo (subsection) ── */}
+              <div className={styles.subsectionDivider}>
+                <span className={styles.subsectionLabel}>Diagrama de Fluxo</span>
+              </div>
+
               <div className={styles.fieldGrid}>
                 <div className={styles.fieldFull}>
-                  <Textarea
-                    label="2.1 — Qual é o processo ou operação da empresa que apresenta o problema?"
-                    withAsterisk
-                    value={form.processoOperacao}
-                    onChange={(e) => set('processoOperacao', e.currentTarget.value)}
-                    minRows={3}
-                    autosize
+                  <TextInput
+                    label="2.6 — Título do diagrama"
+                    placeholder="Ex: Fluxo do processo monitorado"
+                    value={form.diagramTitle}
+                    onChange={(e) => set('diagramTitle', e.currentTarget.value)}
                   />
                 </div>
-                <div className={styles.fieldFull}>
-                  <Textarea
-                    label="2.2 — Quais são os desafios atuais enfrentados nesse processo?"
-                    withAsterisk
-                    value={form.desafiosAtuais}
-                    onChange={(e) => set('desafiosAtuais', e.currentTarget.value)}
-                    minRows={3}
-                    autosize
-                  />
+              </div>
+
+              <div className={styles.diagramArrayHeader}>
+                <span className={styles.diagramArrayLabel}>2.7 — Etapas do diagrama</span>
+                <Button
+                  size="xs"
+                  variant="light"
+                  color="red"
+                  onClick={() =>
+                    set('diagramNodes', [
+                      ...form.diagramNodes,
+                      { icon: '', label: '', sub: '', isSuccess: false },
+                    ])
+                  }
+                >
+                  + Adicionar
+                </Button>
+              </div>
+              {form.diagramNodes.length === 0 && (
+                <div className={styles.emptyState}>
+                  Nenhuma etapa adicionada. O diagrama ficará oculto na proposta.
                 </div>
-                <div className={styles.fieldFull}>
-                  <Textarea
-                    label="2.3 — Quais são os impactos mensuráveis do problema?"
-                    description="Ex: desperdício, retrabalho, erros"
-                    value={form.impactosMensuraveis}
-                    onChange={(e) => set('impactosMensuraveis', e.currentTarget.value)}
-                    minRows={2}
-                    autosize
-                  />
-                </div>
-                <div className={styles.fieldFull}>
-                  <Switch
-                    label="2.4 — Existe alguma solução prévia já desenvolvida ou testada?"
-                    checked={form.existeSolucaoPrevia}
-                    onChange={(e) => set('existeSolucaoPrevia', e.currentTarget.checked)}
-                    size="md"
-                    styles={{ label: { color: 'var(--mantine-color-dimmed)' } }}
-                  />
-                </div>
-                {form.existeSolucaoPrevia && (
-                  <div className={styles.fieldFull}>
-                    <Textarea
-                      label="2.5 — Descreva o que já foi feito e quais limitações foram identificadas"
-                      description="Visível somente quando 2.4 = Sim"
-                      value={form.descricaoSolucaoPrevia}
-                      onChange={(e) => set('descricaoSolucaoPrevia', e.currentTarget.value)}
-                      minRows={3}
-                      autosize
-                    />
+              )}
+              <div className={styles.diagramNodesGrid}>
+              {form.diagramNodes.map((node, i) => (
+                <div key={i} className={styles.arrayItem}>
+                  <div className={styles.arrayItemHeader}>
+                    <span className={styles.arrayItemIndex}>
+                      ETAPA #{i + 1}
+                    </span>
+                    <Tooltip label="Remover">
+                      <ActionIcon
+                        variant="subtle"
+                        color="red"
+                        size="sm"
+                        onClick={() =>
+                          set('diagramNodes', removeArrayItem(form.diagramNodes, i))
+                        }
+                      >
+                        <IconX size={14} />
+                      </ActionIcon>
+                    </Tooltip>
                   </div>
-                )}
+                  <div className={styles.diagramNodeFields}>
+                    <div className={styles.diagramNodeRow}>
+                      <div className={styles.diagramNodeIconCol}>
+                        <Select
+                          label="Ícone"
+                          placeholder="Selecione"
+                          data={DIAGRAM_ICON_OPTIONS}
+                          value={node.icon || null}
+                          onChange={(val) =>
+                            set(
+                              'diagramNodes',
+                              updateArrayItem<DiagramNode>(form.diagramNodes, i, {
+                                icon: val ?? '',
+                              }),
+                            )
+                          }
+                          searchable
+                          leftSection={
+                            node.icon && DIAGRAM_ICON_MAP[node.icon]
+                              ? (() => { const Ic = DIAGRAM_ICON_MAP[node.icon]; return <Ic size={16} color="var(--color-neutral-light-4)" />; })()
+                              : undefined
+                          }
+                          renderOption={({ option }) => {
+                            const Ic = DIAGRAM_ICON_MAP[option.value];
+                            return (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                {Ic && <Ic size={16} color="var(--color-neutral-light-4)" />}
+                                <span>{option.label}</span>
+                              </div>
+                            );
+                          }}
+                        />
+                      </div>
+                      <div className={styles.diagramNodeTitleCol}>
+                        <TextInput
+                          label="Título da etapa"
+                          placeholder="Ex: Contagem de Entrada"
+                          value={node.label}
+                          onChange={(e) =>
+                            set(
+                              'diagramNodes',
+                              updateArrayItem<DiagramNode>(form.diagramNodes, i, {
+                                label: e.currentTarget.value,
+                              }),
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <TextInput
+                      label="Subtítulo"
+                      placeholder="Ex: Sensor fotoelétrico"
+                      value={node.sub}
+                      onChange={(e) =>
+                        set(
+                          'diagramNodes',
+                          updateArrayItem<DiagramNode>(form.diagramNodes, i, {
+                            sub: e.currentTarget.value,
+                          }),
+                        )
+                      }
+                    />
+                    <div className={styles.diagramNodeSwitch}>
+                      <Switch
+                        label="Sucesso"
+                        checked={!!node.isSuccess}
+                        onChange={(e) =>
+                          set(
+                            'diagramNodes',
+                            updateArrayItem<DiagramNode>(form.diagramNodes, i, {
+                              isSuccess: e.currentTarget.checked,
+                            }),
+                          )
+                        }
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
               </div>
             </SectionCard>
 
@@ -406,18 +562,18 @@ export function AdminPage({ slug }: AdminPageProps) {
             <SectionCard id="sec-3" icon={<IconTarget size={20} />} title="Seção 3 — Objetivo do Projeto">
               <div className={styles.fieldGrid}>
                 <div className={styles.fieldFull}>
-                  <Textarea
+                  <RichTextArea
                     label="3.1 — Qual é o objetivo central do projeto?"
+                    placeholder="Ex: Desenvolver um protótipo funcional para monitoramento da aplicação de cola quente"
                     withAsterisk
                     value={form.objetivoCentral}
-                    onChange={(e) => set('objetivoCentral', e.currentTarget.value)}
-                    minRows={3}
-                    autosize
+                    onChange={(val) => set('objetivoCentral', val)}
                   />
                 </div>
                 <NumberInput
                   label="3.2 — Prazo estimado de execução (meses)"
                   description="Valor espelhado automaticamente no campo 8.1"
+                  placeholder="Ex: 15"
                   withAsterisk
                   value={form.totalMonths}
                   onChange={(val) => set('totalMonths', typeof val === 'number' ? val : 1)}
@@ -427,21 +583,19 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <div />
                 <div className={styles.fieldFull}>
-                  <Textarea
+                  <RichTextArea
                     label="3.3 — Qual tecnologia ou abordagem será utilizada para resolver o problema?"
+                    placeholder="Ex: Sensores IoT, visão computacional, sistema embarcado com comunicação MQTT"
                     value={form.tecnologiaAbordagem}
-                    onChange={(e) => set('tecnologiaAbordagem', e.currentTarget.value)}
-                    minRows={2}
-                    autosize
+                    onChange={(val) => set('tecnologiaAbordagem', val)}
                   />
                 </div>
                 <div className={styles.fieldFull}>
-                  <Textarea
+                  <RichTextArea
                     label="3.4 — Quais são os resultados esperados ao final do projeto?"
+                    placeholder="Ex: Redução de 30% no desperdício de adesivo, dashboard de monitoramento em tempo real"
                     value={form.resultadosEsperados}
-                    onChange={(e) => set('resultadosEsperados', e.currentTarget.value)}
-                    minRows={2}
-                    autosize
+                    onChange={(val) => set('resultadosEsperados', val)}
                   />
                 </div>
               </div>
@@ -470,21 +624,19 @@ export function AdminPage({ slug }: AdminPageProps) {
                   onChange={(val) => set('trlFinal', val ?? '')}
                 />
                 <div className={styles.fieldFull}>
-                  <Textarea
+                  <RichTextArea
                     label="4.3 — Justificativa para o TRL inicial"
+                    placeholder="Ex: Já existem estudos laboratoriais comprovando a viabilidade dos sensores selecionados"
                     value={form.justificativaTrlInicial}
-                    onChange={(e) => set('justificativaTrlInicial', e.currentTarget.value)}
-                    minRows={2}
-                    autosize
+                    onChange={(val) => set('justificativaTrlInicial', val)}
                   />
                 </div>
                 <div className={styles.fieldFull}>
-                  <Textarea
+                  <RichTextArea
                     label="4.4 — Justificativa para o TRL final esperado"
+                    placeholder="Ex: Ao final, o protótipo estará validado em ambiente industrial real"
                     value={form.justificativaTrlFinal}
-                    onChange={(e) => set('justificativaTrlFinal', e.currentTarget.value)}
-                    minRows={2}
-                    autosize
+                    onChange={(val) => set('justificativaTrlFinal', val)}
                   />
                 </div>
               </div>
@@ -529,7 +681,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                           set('escopoItems', removeArrayItem(form.escopoItems, i))
                         }
                       >
-                        ✕
+                        <IconX size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </div>
@@ -579,7 +731,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                             set('naoEscopoItems', removeArrayItem(form.naoEscopoItems, i))
                           }
                         >
-                          ✕
+                          <IconX size={14} />
                         </ActionIcon>
                       </Tooltip>
                     </div>
@@ -603,13 +755,12 @@ export function AdminPage({ slug }: AdminPageProps) {
               <div className={styles.arraySection}>
                 <div className={styles.fieldGrid}>
                   <div className={styles.fieldFull}>
-                    <Textarea
+                    <RichTextArea
                       label="5.3 — Existem restrições de quantidade, modelos ou ambientes?"
                       description='Ex: "Apenas 5 conjuntos de montagem serão considerados"'
+                      placeholder="Ex: Validação limitada a 2 linhas de produção na unidade de Itapevi"
                       value={form.restricoesEscopo}
-                      onChange={(e) => set('restricoesEscopo', e.currentTarget.value)}
-                      minRows={2}
-                      autosize
+                      onChange={(val) => set('restricoesEscopo', val)}
                     />
                   </div>
                 </div>
@@ -671,7 +822,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                           set('macroatividades', next);
                         }}
                       >
-                        ✕
+                        <IconX size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </div>
@@ -698,19 +849,18 @@ export function AdminPage({ slug }: AdminPageProps) {
                       }
                     />
                     <div className={styles.arrayItemFieldFull}>
-                      <Textarea
+                      <RichTextArea
                         label="6.3 — Descrição detalhada da atividade"
+                        placeholder="Ex: Levantamento de requisitos técnicos, definição de arquitetura e seleção de componentes"
                         value={item.descricao}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           set(
                             'macroatividades',
                             updateArrayItem<MacroatividadeForm>(form.macroatividades, i, {
-                              descricao: e.currentTarget.value,
+                              descricao: val,
                             }),
                           )
                         }
-                        minRows={2}
-                        autosize
                       />
                     </div>
                     <TextInput
@@ -730,6 +880,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                     <NumberInput
                       label="6.5 — Mês de início"
                       description={`Entre 1 e ${form.totalMonths}`}
+                      placeholder="Ex: 1"
                       value={item.mesInicio ?? ''}
                       onChange={(val) =>
                         set(
@@ -746,6 +897,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                     <NumberInput
                       label="6.6 — Mês de término"
                       description={`Entre 1 e ${form.totalMonths}. Deve ser ≥ mês de início`}
+                      placeholder="Ex: 5"
                       value={item.mesTermino ?? ''}
                       onChange={(val) =>
                         set(
@@ -769,7 +921,7 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* ═════════════════════════════════════ */}
             <SectionCard
               id="sec-7"
-              icon="📌"
+              icon={<IconPinned size={20} />}
               title="Seção 7 — Premissas"
               count={form.premissasForm.length}
             >
@@ -805,26 +957,25 @@ export function AdminPage({ slug }: AdminPageProps) {
                           set('premissasForm', removeArrayItem(form.premissasForm, i))
                         }
                       >
-                        ✕
+                        <IconX size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </div>
                   <div className={styles.arrayItemFields}>
                     <div className={styles.arrayItemFieldFull}>
-                      <Textarea
+                      <RichTextArea
                         label="7.1 — Descrição da premissa"
+                        placeholder="Ex: A empresa fornecerá acesso à linha de produção para instalação dos sensores"
                         withAsterisk
                         value={item.descricao}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           set(
                             'premissasForm',
                             updateArrayItem<PremissaForm>(form.premissasForm, i, {
-                              descricao: e.currentTarget.value,
+                              descricao: val,
                             }),
                           )
                         }
-                        minRows={2}
-                        autosize
                       />
                     </div>
                     <Select
@@ -844,6 +995,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                     <NumberInput
                       label="7.3 — Prazo (mês do projeto)"
                       description={`Entre 1 e ${form.totalMonths}`}
+                      placeholder="Ex: 3"
                       value={item.prazo ?? ''}
                       onChange={(val) =>
                         set(
@@ -865,7 +1017,7 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* ═════════════════════════════════════ */}
             {/* Seção 8 — Cronograma e Entregas       */}
             {/* ═════════════════════════════════════ */}
-            <SectionCard id="sec-8" icon="📅" title="Seção 8 — Cronograma e Entregas">
+            <SectionCard id="sec-8" icon={<IconCalendar size={20} />} title="Seção 8 — Cronograma e Entregas">
               <div className={styles.fieldGrid}>
                 <NumberInput
                   label="8.1 — Duração total do projeto (meses)"
@@ -877,6 +1029,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <NumberInput
                   label="8.2 — Relatórios de entrega parcial previstos"
+                  placeholder="Ex: 3"
                   value={form.qtdRelatoriosEntrega ?? ''}
                   onChange={handleQtdRelatoriosChange}
                   min={0}
@@ -917,6 +1070,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                 <NumberInput
                   label="8.4 — Mês da entrega final"
                   description={`Entre 1 e ${form.totalMonths}`}
+                  placeholder="Ex: 15"
                   value={form.mesEntregaFinal ?? ''}
                   onChange={(val) =>
                     set('mesEntregaFinal', typeof val === 'number' ? val : null)
@@ -977,7 +1131,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                             )
                           }
                         >
-                          ✕
+                          <IconX size={14} />
                         </ActionIcon>
                       </Tooltip>
                     </div>
@@ -989,11 +1143,12 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* ═════════════════════════════════════ */}
             {/* Seção 9 — Orçamento                   */}
             {/* ═════════════════════════════════════ */}
-            <SectionCard id="sec-9" icon="💰" title="Seção 9 — Orçamento">
+            <SectionCard id="sec-9" icon={<IconCurrencyDollar size={20} />} title="Seção 9 — Orçamento">
               <div className={styles.fieldGrid}>
                 <NumberInput
                   label="9.1 — Contrapartida financeira da fonte principal (R$)"
                   description={form.fonteFinanciamento ? `Fonte: ${form.fonteFinanciamento}` : 'Defina a fonte na Seção 1'}
+                  placeholder="Ex: 500.000,00"
                   withAsterisk
                   prefix="R$ "
                   decimalScale={2}
@@ -1013,6 +1168,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <NumberInput
                   label="9.3 — Contrapartida econômica do SENAI (R$)"
+                  placeholder="Ex: 300.000,00"
                   withAsterisk
                   prefix="R$ "
                   decimalScale={2}
@@ -1032,6 +1188,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <NumberInput
                   label="9.5 — Contrapartida financeira da empresa (R$)"
+                  placeholder="Ex: 200.000,00"
                   withAsterisk
                   prefix="R$ "
                   decimalScale={2}
@@ -1072,7 +1229,7 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* ═════════════════════════════════════ */}
             <SectionCard
               id="sec-10"
-              icon="📊"
+              icon={<IconChartBar size={20} />}
               title="Seção 10 — Detalhamento do Orçamento por Categoria"
               count={form.orcamentoCategorias.length}
             >
@@ -1111,7 +1268,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                           )
                         }
                       >
-                        ✕
+                        <IconX size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </div>
@@ -1160,6 +1317,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                     />
                     <NumberInput
                       label="10.4 — Valor (R$)"
+                      placeholder="Ex: 50.000,00"
                       prefix="R$ "
                       decimalScale={2}
                       thousandSeparator="."
@@ -1185,7 +1343,7 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* ═════════════════════════════════════ */}
             <SectionCard
               id="sec-11"
-              icon="🛒"
+              icon={<IconShoppingCart size={20} />}
               title="Seção 11 — Previsão de Compras"
               count={form.compras.length}
             >
@@ -1227,13 +1385,14 @@ export function AdminPage({ slug }: AdminPageProps) {
                           size="sm"
                           onClick={() => set('compras', removeArrayItem(form.compras, i))}
                         >
-                          ✕
+                          <IconX size={14} />
                         </ActionIcon>
                       </Tooltip>
                     </div>
                     <div className={styles.arrayItemFields}>
                       <TextInput
                         label="11.1 — Nome do material ou equipamento"
+                        placeholder="Ex: Sensor de temperatura industrial"
                         value={item.nome}
                         onChange={(e) =>
                           set(
@@ -1246,6 +1405,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                       />
                       <NumberInput
                         label="11.2 — Quantidade"
+                        placeholder="Ex: 5"
                         value={item.quantidade ?? ''}
                         onChange={(val) =>
                           set(
@@ -1260,6 +1420,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                       />
                       <NumberInput
                         label="11.3 — Valor unitário estimado (R$)"
+                        placeholder="Ex: 1.200,00"
                         prefix="R$ "
                         decimalScale={2}
                         thousandSeparator="."
@@ -1284,6 +1445,7 @@ export function AdminPage({ slug }: AdminPageProps) {
                       <div className={styles.arrayItemFieldFull}>
                         <TextInput
                           label="11.5 — Observações"
+                          placeholder="Ex: Fornecedor preferencial, prazo de entrega estimado, etc."
                           value={item.observacoes}
                           onChange={(e) =>
                             set(
@@ -1306,7 +1468,7 @@ export function AdminPage({ slug }: AdminPageProps) {
             {/* ═════════════════════════════════════ */}
             <SectionCard
               id="sec-12"
-              icon="⚠️"
+              icon={<IconAlertTriangle size={20} />}
               title="Seção 12 — Matriz de Riscos"
               count={form.riscosForm.length}
             >
@@ -1350,57 +1512,54 @@ export function AdminPage({ slug }: AdminPageProps) {
                           set('riscosForm', removeArrayItem(form.riscosForm, i))
                         }
                       >
-                        ✕
+                        <IconX size={14} />
                       </ActionIcon>
                     </Tooltip>
                   </div>
                   <div className={styles.arrayItemFields}>
                     <div className={styles.arrayItemFieldFull}>
-                      <Textarea
+                      <RichTextArea
                         label="12.1 — Descrição do risco"
+                        placeholder="Ex: Atraso na entrega de componentes importados"
                         value={risco.descricao}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           set(
                             'riscosForm',
                             updateArrayItem<RiscoForm>(form.riscosForm, i, {
-                              descricao: e.currentTarget.value,
+                              descricao: val,
                             }),
                           )
                         }
-                        minRows={2}
-                        autosize
                       />
                     </div>
                     <div className={styles.arrayItemFieldFull}>
-                      <Textarea
+                      <RichTextArea
                         label="12.2 — Causas do risco"
+                        placeholder="Ex: Dependência de fornecedores internacionais com lead time longo"
                         value={risco.causas}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           set(
                             'riscosForm',
                             updateArrayItem<RiscoForm>(form.riscosForm, i, {
-                              causas: e.currentTarget.value,
+                              causas: val,
                             }),
                           )
                         }
-                        minRows={2}
-                        autosize
                       />
                     </div>
                     <div className={styles.arrayItemFieldFull}>
-                      <Textarea
+                      <RichTextArea
                         label="12.3 — Consequências"
+                        placeholder="Ex: Atraso no cronograma de 2 meses, impactando a entrega final"
                         value={risco.consequencias}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           set(
                             'riscosForm',
                             updateArrayItem<RiscoForm>(form.riscosForm, i, {
-                              consequencias: e.currentTarget.value,
+                              consequencias: val,
                             }),
                           )
                         }
-                        minRows={2}
-                        autosize
                       />
                     </div>
                     <Select
@@ -1432,19 +1591,18 @@ export function AdminPage({ slug }: AdminPageProps) {
                       }
                     />
                     <div className={styles.arrayItemFieldFull}>
-                      <Textarea
+                      <RichTextArea
                         label="12.6 — Ação de contenção ou alavancagem"
+                        placeholder="Ex: Mapear fornecedores alternativos nacionais como plano B"
                         value={risco.acaoContencao}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           set(
                             'riscosForm',
                             updateArrayItem<RiscoForm>(form.riscosForm, i, {
-                              acaoContencao: e.currentTarget.value,
+                              acaoContencao: val,
                             }),
                           )
                         }
-                        minRows={2}
-                        autosize
                       />
                     </div>
                     <Select
@@ -1490,7 +1648,7 @@ export function AdminPage({ slug }: AdminPageProps) {
 
       {saved && (
         <div className={styles.toast}>
-          <span className={styles.toastIcon}>✓</span>
+          <span className={styles.toastIcon}><IconCheck size={16} /></span>
           Alterações salvas com sucesso!
         </div>
       )}
