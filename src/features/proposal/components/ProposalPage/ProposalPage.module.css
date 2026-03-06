@@ -1,4 +1,28 @@
 /* ========== CSS Variables ========== */
+
+/* ── Custom scrollbar for proposal page ── */
+:global(html.proposal-scrollbar) {
+  scrollbar-width: thin;
+  scrollbar-color: #E8173A #0A0A0A;
+}
+
+:global(html.proposal-scrollbar)::-webkit-scrollbar {
+  width: 8px;
+}
+
+:global(html.proposal-scrollbar)::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+:global(html.proposal-scrollbar)::-webkit-scrollbar-thumb {
+  background: #E8173A;
+  border-radius: 4px;
+}
+
+:global(html.proposal-scrollbar)::-webkit-scrollbar-thumb:hover {
+  background: #F43F61;
+}
+
 .root {
   --red: #E8173A;
   --red-dark: #B5102C;
@@ -220,7 +244,7 @@
 }
 
 .heroTitle {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 300;
   line-height: 1.6;
   color: var(--muted2);
@@ -585,7 +609,7 @@
 
 .premissaNumber {
   font-family: 'Syne', sans-serif;
-  font-size: 11px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--red);
@@ -593,7 +617,7 @@
 }
 
 .premissaText {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.7;
   color: var(--muted2);
@@ -662,7 +686,7 @@
   gap: 14px;
   padding: 14px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.6;
   color: var(--muted2);
@@ -721,12 +745,12 @@
 
 .macroTableTd {
   padding: 20px;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.6;
   color: var(--muted2);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .macroTable tbody tr:hover {
@@ -742,7 +766,7 @@
 }
 
 .macroName {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--white);
   margin-bottom: 6px;
@@ -829,7 +853,7 @@
 
 .ganttHeaderTh {
   padding: 10px 0;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -852,7 +876,7 @@
 
 .ganttRowTdFirst {
   padding: 16px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 400;
   color: var(--muted2);
   white-space: nowrap;
@@ -897,7 +921,7 @@
 
 .riscoHeaderRow {
   display: grid;
-  grid-template-columns: 1fr 1fr 100px 140px;
+  grid-template-columns: 1fr 1fr 150px 140px;
   background: var(--dark3);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -914,7 +938,7 @@
 
 .riscoCard {
   display: grid;
-  grid-template-columns: 1fr 1fr 100px 140px;
+  grid-template-columns: 1fr 1fr 150px 140px;
   background: var(--dark2);
   transition: background 0.15s;
 }
@@ -926,10 +950,13 @@
 .riscoCell {
   padding: 20px 24px;
   border-right: 1px solid rgba(255, 255, 255, 0.04);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.6;
   color: var(--muted2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .riscoCellTitle {
@@ -949,6 +976,8 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  align-self: flex-start;
+  width: fit-content;
 }
 
 .badgeAlto {

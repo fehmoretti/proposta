@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import styles from './ProposalPage.module.css';
 import { useScrollProgress, useActiveSection, useScrollTo } from './hooks/useProposalScroll';
 import { TopNav } from './TopNav';
@@ -15,10 +16,17 @@ import { RiscosSection } from './RiscosSection';
 import { OrcamentoSection } from './OrcamentoSection';
 import { FooterSection } from './FooterSection';
 
+const SCROLLBAR_CLASS = 'proposal-scrollbar';
+
 export function ProposalPage() {
   const progress = useScrollProgress();
   const activeSection = useActiveSection();
   const scrollTo = useScrollTo();
+
+  useEffect(() => {
+    document.documentElement.classList.add(SCROLLBAR_CLASS);
+    return () => document.documentElement.classList.remove(SCROLLBAR_CLASS);
+  }, []);
 
   return (
     <div className={styles.root}>

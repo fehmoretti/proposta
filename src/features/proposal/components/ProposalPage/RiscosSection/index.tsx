@@ -39,21 +39,17 @@ export function RiscosSection() {
             return (
               <div key={i} className={styles.riscoCard}>
                 <div className={styles.riscoCell}>
-                  <div className={styles.riscoCellTitle}>Identificação</div>
-                  {risco.descricao}
+                  <div dangerouslySetInnerHTML={{ __html: risco.descricao }} />
                 </div>
                 <div className={styles.riscoCell}>
-                  <div className={styles.riscoCellTitle}>Consequência</div>
-                  {risco.consequencias}
+                  <div dangerouslySetInnerHTML={{ __html: risco.consequencias }} />
                 </div>
                 <div className={styles.riscoCell}>
-                  <div className={styles.riscoCellTitle}>Nível</div>
                   <span className={`${styles.badge} ${BADGE_MAP[level] ?? ''}`}>
                     {LEVEL_LABEL[level] ?? risco.nivelExposicao}
                   </span>
                 </div>
                 <div className={styles.riscoCell}>
-                  <div className={styles.riscoCellTitle}>Resp.</div>
                   {risco.responsavel}
                 </div>
               </div>
