@@ -1,18 +1,5 @@
 import { NextResponse } from 'next/server';
-import fs from 'node:fs';
-import path from 'node:path';
-
-const DATA_DIR = path.join(process.cwd(), 'data', 'proposals');
-
-function ensureDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
-
-function filePath(slug: string) {
-  return path.join(DATA_DIR, `${slug}.json`);
-}
+import { getProposalBySlug, updateProposal, deleteProposalBySlug, proposalExists } from '@/lib/db';
 
 interface RouteContext {
   params: Promise<{ slug: string }>;
@@ -20,42 +7,32 @@ interface RouteContext {
 
 /* GET /api/proposals/[slug] — get single proposal */
 export async function GET(_req: Request, ctx: RouteContext) {
-  ensureDir();
   const { slug } = await ctx.params;
-  const fp = filePath(slug);
+  const record = await getProposalBySlug(slug);
 
-  if (!fs.existsSync(fp)) {
+  if (!record) {
     return NextResponse.json({ error: 'not found' }, { status: 404 });
   }
 
-  const raw = fs.readFileSync(fp, 'utf-8');
-  return NextResponse.json(JSON.parse(raw));
+  return NextResponse.json(record);
 }
 
 /* PUT /api/proposals/[slug] — update proposal */
 export async function PUT(req: Request, ctx: RouteContext) {
-  ensureDir();
   const { slug } = await ctx.params;
-  const fp = filePath(slug);
 
-  if (!fs.existsSync(fp)) {
+  if (!(await proposalExists(slug))) {
     return NextResponse.json({ error: 'not found' }, { status: 404 });
   }
 
   const body = await req.json();
-  fs.writeFileSync(fp, JSON.stringify(body, null, 2), 'utf-8');
+  await updateProposal(body);
   return NextResponse.json(body);
 }
 
 /* DELETE /api/proposals/[slug] — delete proposal */
 export async function DELETE(_req: Request, ctx: RouteContext) {
-  ensureDir();
   const { slug } = await ctx.params;
-  const fp = filePath(slug);
-
-  if (fs.existsSync(fp)) {
-    fs.unlinkSync(fp);
-  }
-
+  await deleteProposalBySlug(slug);
   return NextResponse.json({ ok: true });
 }

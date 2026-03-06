@@ -9,6 +9,7 @@ export function FooterSection() {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerBrand}>
+        <img src="/logo-dt.svg" alt="DT" className={styles.footerLogo} />
         {data.footerBrand}{' '}
         <span className={styles.footerBrandAccent}>{data.footerBrandAccent}</span>
       </div>

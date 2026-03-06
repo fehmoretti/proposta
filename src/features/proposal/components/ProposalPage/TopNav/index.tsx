@@ -10,6 +10,7 @@ export function TopNav() {
   return (
     <nav className={styles.topnav}>
       <div className={styles.navBrand}>
+        <img src="/logo-dt.svg" alt="DT" className={styles.navLogo} />
         <span className={styles.navBrandAccent}>{data.navBrand}</span> {data.navBrandAccent}
       </div>
       <ul className={styles.navLinks}>

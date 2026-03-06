@@ -27,7 +27,7 @@ export function LandingPage() {
       {/* Nav */}
       <nav className={styles.nav}>
         <a className={styles.navBrand} href="/">
-          <span className={styles.navDot} />
+          <img src="/logo-dt.svg" alt="DT" className={styles.navLogo} />
           <span className={styles.navTitle}>
             SENAI <span className={styles.navAccent}>Distrito Tecnológico</span>
           </span>

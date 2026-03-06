@@ -22,11 +22,9 @@
   text-decoration: none;
 }
 
-.navDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #E8173A;
+.navLogo {
+  height: 22px;
+  width: auto;
 }
 
 .navTitle {

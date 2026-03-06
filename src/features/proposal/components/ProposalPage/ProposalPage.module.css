@@ -58,12 +58,20 @@
 }
 
 .navBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-family: 'Syne', sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted2);
+}
+
+.navLogo {
+  height: 22px;
+  width: auto;
 }
 
 .navBrandAccent {
@@ -1127,12 +1135,20 @@
 }
 
 .footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: 'Syne', sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.footerLogo {
+  height: 18px;
+  width: auto;
 }
 
 .footerBrandAccent {
