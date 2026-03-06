@@ -37,7 +37,7 @@ export function ProposalDataProvider({ slug, children }: ProposalDataProviderPro
         const record = await getProposal(slug);
         if (cancelled) return;
         if (record) {
-          setData({ ...DEFAULT_PROPOSAL, ...record.data });
+          setData({ ...DEFAULT_PROPOSAL, ...record.data, clientName: record.clientName || record.data.clientName });
         }
       }
       setHydrated(true);

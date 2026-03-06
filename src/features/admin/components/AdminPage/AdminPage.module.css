@@ -263,7 +263,7 @@
 }
 
 .sectionCardContentOpen {
-  max-height: 5000px;
+  max-height: none;
   opacity: 1;
   padding: var(--space-xxxs) var(--space-m) var(--space-m);
 }
@@ -374,6 +374,12 @@
 /* ========== Array Items ========== */
 .arraySection {
   margin-top: var(--space-m);
+}
+
+.arrayGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xxs);
 }
 
 .arrayHeader {

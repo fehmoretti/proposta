@@ -64,14 +64,12 @@ export async function getProposal(slug: string): Promise<ProposalRecord | null> 
   }
 }
 
-export async function createProposal(title: string, clientName: string): Promise<ProposalRecord> {
+export async function createProposal(title: string, clientName: string, sigla?: string): Promise<ProposalRecord> {
   const all = await listProposals();
   const existingSlugs = all.map((p) => p.slug);
-  const baseSlug = toSlug(title || clientName || 'proposta');
+  const baseSlug = toSlug(sigla || title || clientName || 'proposta');
   const slug = ensureUniqueSlug(baseSlug, existingSlugs);
   const now = new Date().toISOString();
-
-  const { main, accent } = splitClientName(clientName);
 
   const record: ProposalRecord = {
     slug,
@@ -81,9 +79,10 @@ export async function createProposal(title: string, clientName: string): Promise
     updatedAt: now,
     data: {
       ...DEFAULT_PROPOSAL,
-      clientName: main,
-      clientNameAccent: accent,
+      clientName: clientName,
+      clientNameAccent: '',
       heroTitle: title,
+      siglaProjeto: sigla || '',
       heroTag: `Pré proposta · ${new Date().getFullYear()}`,
     },
   };
@@ -101,20 +100,12 @@ export async function saveProposal(slug: string, data: ProposalFormData): Promis
   const existing = await getProposal(slug);
   if (!existing) return null;
 
-  /* Auto-split clientName → main + accent */
-  const { main, accent } = splitClientName(data.clientName);
-  const patchedData: ProposalFormData = {
-    ...data,
-    clientName: main,
-    clientNameAccent: accent,
-  };
-
   const updated: ProposalRecord = {
     ...existing,
-    title: patchedData.heroTitle || existing.title,
+    title: data.heroTitle || existing.title,
     clientName: data.clientName || existing.clientName,
     updatedAt: new Date().toISOString(),
-    data: patchedData,
+    data,
   };
 
   await fetch(`${API}/${slug}`, {

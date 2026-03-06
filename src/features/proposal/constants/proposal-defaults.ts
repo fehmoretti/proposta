@@ -61,6 +61,7 @@ export const DEFAULT_PROPOSAL: ProposalFormData = {
   /* ═══════════════════════════════════════════ */
 
   /* Seção 1 — Identificação */
+  siglaProjeto: '',
   responsavelProjeto: '',
   dataElaboracao: new Date().toISOString().slice(0, 10),
   fonteFinanciamento: '',

@@ -18,13 +18,13 @@ import {
 } from '@/features/proposal/services/proposal-storage';
 import {
   IconFileText,
-  IconBuilding,
   IconCalendar,
   IconClipboardList,
   IconExternalLink,
   IconCopy,
   IconTrash,
   IconCheck,
+  IconSearch,
 } from '@tabler/icons-react';
 import styles from './AdminDashboard.module.css';
 
@@ -43,7 +43,9 @@ export function AdminDashboard() {
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newClient, setNewClient] = useState('');
+  const [newSigla, setNewSigla] = useState('');
   const [toast, setToast] = useState('');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -60,11 +62,12 @@ export function AdminDashboard() {
 
   const handleCreate = async () => {
     if (!newTitle.trim() && !newClient.trim()) return;
-    const record = await createProposal(newTitle.trim(), newClient.trim());
+    const record = await createProposal(newTitle.trim(), newClient.trim(), newSigla.trim());
     setProposals(await listProposals());
     setShowCreate(false);
     setNewTitle('');
     setNewClient('');
+    setNewSigla('');
     showToast(`Proposta "${record.title}" criada`);
     router.push(`/admin/${record.slug}`);
   };
@@ -134,25 +137,14 @@ export function AdminDashboard() {
               </Button>
             </div>
 
-            {/* Stats */}
-            <div className={styles.statsRow}>
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}><IconFileText size={22} /></div>
-                <div>
-                  <p className={styles.statValue}>{proposals.length}</p>
-                  <p className={styles.statLabel}>Propostas</p>
-                </div>
-              </div>
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}><IconBuilding size={22} /></div>
-                <div>
-                  <p className={styles.statValue}>
-                    {new Set(proposals.map((p) => p.clientName)).size}
-                  </p>
-                  <p className={styles.statLabel}>Empresas</p>
-                </div>
-              </div>
-            </div>
+            {/* Search */}
+            <TextInput
+              placeholder="Pesquisar por empresa, sigla ou projeto..."
+              leftSection={<IconSearch size={16} />}
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+              className={styles.searchBar}
+            />
 
             {/* Proposals List */}
             {proposals.length === 0 ? (
@@ -168,7 +160,18 @@ export function AdminDashboard() {
               </div>
             ) : (
               <div className={styles.proposalsGrid}>
-                {proposals.map((p) => (
+                {proposals
+                  .filter((p) => {
+                    if (!search.trim()) return true;
+                    const q = search.toLowerCase();
+                    return (
+                      (p.title || '').toLowerCase().includes(q) ||
+                      (p.clientName || '').toLowerCase().includes(q) ||
+                      p.slug.toLowerCase().includes(q) ||
+                      (p.data?.siglaProjeto || '').toLowerCase().includes(q)
+                    );
+                  })
+                  .map((p) => (
                   <div key={p.slug} className={styles.proposalCard}>
                     <div
                       className={styles.proposalIcon}
@@ -255,6 +258,14 @@ export function AdminDashboard() {
             withAsterisk
             value={newClient}
             onChange={(e) => setNewClient(e.currentTarget.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+          />
+          <TextInput
+            label="Sigla do projeto"
+            placeholder="Ex: HLC, EoL, SIMO"
+            description="Será usada como link da proposta"
+            value={newSigla}
+            onChange={(e) => setNewSigla(e.currentTarget.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
           />
           <Button color="red" fullWidth onClick={handleCreate} mt="sm">

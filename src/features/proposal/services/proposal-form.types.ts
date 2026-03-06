@@ -79,6 +79,7 @@ export interface ProposalFormData {
   /* ═══════════════════════════════════════════ */
 
   /* ── Seção 1 — Identificação ──────────────── */
+  siglaProjeto: string;
   responsavelProjeto: string;
   dataElaboracao: string;
   fonteFinanciamento: string;

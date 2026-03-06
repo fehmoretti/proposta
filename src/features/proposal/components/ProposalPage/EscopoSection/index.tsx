@@ -47,6 +47,12 @@ export function EscopoSection() {
             </ul>
           </div>
         </div>
+        {data.restricoesEscopo && (
+          <div
+            className={styles.escopoObs}
+            dangerouslySetInnerHTML={{ __html: data.restricoesEscopo }}
+          />
+        )}
       </div>
     </section>
   );

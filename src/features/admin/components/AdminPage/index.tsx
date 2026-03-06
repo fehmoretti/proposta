@@ -164,7 +164,7 @@ export function AdminPage({ slug }: AdminPageProps) {
         router.replace('/admin');
         return;
       }
-      const merged = { ...DEFAULT_PROPOSAL, ...record.data };
+      const merged = { ...DEFAULT_PROPOSAL, ...record.data, clientName: record.clientName || record.data.clientName };
       setSavedData(merged);
       setForm(merged);
       setLoaded(true);
@@ -331,20 +331,26 @@ export function AdminPage({ slug }: AdminPageProps) {
                   onChange={(e) => set('heroTitle', e.currentTarget.value)}
                 />
                 <TextInput
-                  label="1.3 — Responsável pelo projeto (Empresa)"
+                  label="1.3 — Sigla do projeto"
+                  placeholder="Ex: HLC, EoL, SIMO"
+                  value={form.siglaProjeto}
+                  onChange={(e) => set('siglaProjeto', e.currentTarget.value)}
+                />
+                <TextInput
+                  label="1.4 — Responsável pelo projeto (Empresa)"
                   placeholder="Nome do responsável"
                   value={form.responsavelProjeto}
                   onChange={(e) => set('responsavelProjeto', e.currentTarget.value)}
                 />
                 <TextInput
-                  label="1.4 — Data de elaboração"
+                  label="1.5 — Data de elaboração"
                   description="Preenchida automaticamente com a data atual"
                   type="date"
                   value={form.dataElaboracao}
                   onChange={(e) => set('dataElaboracao', e.currentTarget.value)}
                 />
                 <Select
-                  label="1.5 — Fonte de financiamento principal"
+                  label="1.6 — Fonte de financiamento principal"
                   placeholder="Selecione..."
                   withAsterisk
                   data={FONTE_FINANCIAMENTO_OPTIONS}
@@ -668,37 +674,39 @@ export function AdminPage({ slug }: AdminPageProps) {
               {form.escopoItems.length === 0 && (
                 <div className={styles.emptyState}>Nenhum item de escopo adicionado</div>
               )}
-              {form.escopoItems.map((item, i) => (
-                <div key={i} className={styles.arrayItem}>
-                  <div className={styles.arrayItemHeader}>
-                    <span className={styles.arrayItemIndex}>ESCOPO #{i + 1}</span>
-                    <Tooltip label="Remover">
-                      <ActionIcon
-                        variant="subtle"
-                        color="red"
-                        size="sm"
-                        onClick={() =>
-                          set('escopoItems', removeArrayItem(form.escopoItems, i))
-                        }
-                      >
-                        <IconX size={14} />
-                      </ActionIcon>
-                    </Tooltip>
+              <div className={styles.arrayGrid}>
+                {form.escopoItems.map((item, i) => (
+                  <div key={i} className={styles.arrayItem}>
+                    <div className={styles.arrayItemHeader}>
+                      <span className={styles.arrayItemIndex}>#{i + 1}</span>
+                      <Tooltip label="Remover">
+                        <ActionIcon
+                          variant="subtle"
+                          color="red"
+                          size="sm"
+                          onClick={() =>
+                            set('escopoItems', removeArrayItem(form.escopoItems, i))
+                          }
+                        >
+                          <IconX size={14} />
+                        </ActionIcon>
+                      </Tooltip>
+                    </div>
+                    <TextInput
+                      placeholder="Descrição do item de escopo..."
+                      value={item.text}
+                      onChange={(e) =>
+                        set(
+                          'escopoItems',
+                          updateArrayItem<EscopoItem>(form.escopoItems, i, {
+                            text: e.currentTarget.value,
+                          }),
+                        )
+                      }
+                    />
                   </div>
-                  <TextInput
-                    placeholder="Descrição do item de escopo..."
-                    value={item.text}
-                    onChange={(e) =>
-                      set(
-                        'escopoItems',
-                        updateArrayItem<EscopoItem>(form.escopoItems, i, {
-                          text: e.currentTarget.value,
-                        }),
-                      )
-                    }
-                  />
-                </div>
-              ))}
+                ))}
+              </div>
 
               {/* 5.2 — Fora do Escopo */}
               <div className={styles.arraySection}>
@@ -718,37 +726,39 @@ export function AdminPage({ slug }: AdminPageProps) {
                 {form.naoEscopoItems.length === 0 && (
                   <div className={styles.emptyState}>Nenhum item fora do escopo</div>
                 )}
-                {form.naoEscopoItems.map((item, i) => (
-                  <div key={i} className={styles.arrayItem}>
-                    <div className={styles.arrayItemHeader}>
-                      <span className={styles.arrayItemIndex}>NÃO ESCOPO #{i + 1}</span>
-                      <Tooltip label="Remover">
-                        <ActionIcon
-                          variant="subtle"
-                          color="red"
-                          size="sm"
-                          onClick={() =>
-                            set('naoEscopoItems', removeArrayItem(form.naoEscopoItems, i))
-                          }
-                        >
-                          <IconX size={14} />
-                        </ActionIcon>
-                      </Tooltip>
+                <div className={styles.arrayGrid}>
+                  {form.naoEscopoItems.map((item, i) => (
+                    <div key={i} className={styles.arrayItem}>
+                      <div className={styles.arrayItemHeader}>
+                        <span className={styles.arrayItemIndex}>#{i + 1}</span>
+                        <Tooltip label="Remover">
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            size="sm"
+                            onClick={() =>
+                              set('naoEscopoItems', removeArrayItem(form.naoEscopoItems, i))
+                            }
+                          >
+                            <IconX size={14} />
+                          </ActionIcon>
+                        </Tooltip>
+                      </div>
+                      <TextInput
+                        placeholder="Descrição do item fora do escopo..."
+                        value={item.text}
+                        onChange={(e) =>
+                          set(
+                            'naoEscopoItems',
+                            updateArrayItem<EscopoItem>(form.naoEscopoItems, i, {
+                              text: e.currentTarget.value,
+                            }),
+                          )
+                        }
+                      />
                     </div>
-                    <TextInput
-                      placeholder="Descrição do item fora do escopo..."
-                      value={item.text}
-                      onChange={(e) =>
-                        set(
-                          'naoEscopoItems',
-                          updateArrayItem<EscopoItem>(form.naoEscopoItems, i, {
-                            text: e.currentTarget.value,
-                          }),
-                        )
-                      }
-                    />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               {/* 5.3 — Restrições */}

@@ -6,6 +6,10 @@ import { useProposalData } from '@/providers/ProposalDataProvider';
 export function PremissasSection() {
   const { data } = useProposalData();
 
+  const items = (data.premissasForm ?? []).filter((p) => p.descricao.trim());
+
+  if (items.length === 0) return null;
+
   return (
     <section id="premissas" className={styles.section}>
       <div className={styles.container}>
@@ -14,17 +18,17 @@ export function PremissasSection() {
           Condições para execução do projeto
         </h2>
         <div className={styles.premissasGrid}>
-          {data.premissas.map((premissa) => (
-            <div key={premissa.code} className={styles.premissaCard}>
-              <div className={styles.premissaNumber}>{premissa.code}</div>
-              <div className={styles.premissaText}>
-                {premissa.text}{' '}
-                {premissa.highlight && (
-                  <strong className={styles.premissaHighlight}>
-                    {premissa.highlight}
-                  </strong>
-                )}
+          {items.map((item, i) => (
+            <div key={i} className={styles.premissaCard}>
+              <div className={styles.premissaNumber}>
+                {String(i + 1).padStart(2, '0')}
               </div>
+              <div
+                className={styles.premissaText}
+                dangerouslySetInnerHTML={{
+                  __html: item.descricao + (item.responsavel ? ` <strong class="${styles.premissaHighlight}">— ${item.responsavel}</strong>` : ''),
+                }}
+              />
             </div>
           ))}
         </div>

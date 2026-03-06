@@ -6,6 +6,12 @@ import { useProposalData } from '@/providers/ProposalDataProvider';
 export function MacroentregasSection() {
   const { data } = useProposalData();
 
+  const items = (data.macroatividades ?? []).filter((m) => m.nome.trim());
+  const trlFrom = data.trlInicial ? `TRL ${data.trlInicial}` : '';
+  const trlTo = data.trlFinal ? `TRL ${data.trlFinal}` : '';
+
+  const trlDesc = 'De conceitos validados de forma isolada até demonstração de protótipo integrado em ambiente industrial relevante.';
+
   return (
     <section id="macroentregas" className={styles.section}>
       <div className={styles.container}>
@@ -23,35 +29,45 @@ export function MacroentregasSection() {
             </tr>
           </thead>
           <tbody>
-            {data.macroentregas.map((item) => (
-              <tr key={item.number}>
+            {items.map((item) => (
+              <tr key={item.numero}>
                 <td className={styles.macroTableTd}>
-                  <div className={styles.macroNum}>{item.number}</div>
+                  <div className={styles.macroNum}>
+                    {String(item.numero).padStart(2, '0')}
+                  </div>
                 </td>
                 <td className={styles.macroTableTd}>
-                  <div className={styles.macroName}>{item.name}</div>
+                  <div className={styles.macroName}>{item.nome}</div>
                 </td>
-                <td className={styles.macroTableTd}>{item.detail}</td>
                 <td className={styles.macroTableTd}>
-                  <span className={styles.macroArea}>{item.area}</span>
+                  <div dangerouslySetInnerHTML={{ __html: item.descricao }} />
+                </td>
+                <td className={styles.macroTableTd}>
+                  <span className={styles.macroArea}>{item.areaResponsavel}</span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className={styles.trlRow}>
-          <span className={styles.trlLabel}>TRL</span>
-          <div className={styles.trlBadges}>
-            <div className={`${styles.trlBadge} ${styles.trlBadgeFrom}`}>
-              {data.trlInfo.from}
+        {(trlFrom || trlTo) && (
+          <div className={styles.trlRow}>
+            <span className={styles.trlLabel}>TRL</span>
+            <div className={styles.trlBadges}>
+              <div className={`${styles.trlBadge} ${styles.trlBadgeFrom}`}>
+                {trlFrom}
+              </div>
+              <div className={styles.trlArrow}>→</div>
+              <div className={`${styles.trlBadge} ${styles.trlBadgeTo}`}>
+                {trlTo}
+              </div>
             </div>
-            <div className={styles.trlArrow}>→</div>
-            <div className={`${styles.trlBadge} ${styles.trlBadgeTo}`}>
-              {data.trlInfo.to}
-            </div>
+            {trlDesc && (
+              <div className={styles.trlDescription}>
+                {trlDesc}
+              </div>
+            )}
           </div>
-          <div className={styles.trlDescription}>{data.trlInfo.description}</div>
-        </div>
+        )}
       </div>
     </section>
   );

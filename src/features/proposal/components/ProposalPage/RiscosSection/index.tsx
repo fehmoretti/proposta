@@ -18,6 +18,8 @@ const LEVEL_LABEL: Record<string, string> = {
 export function RiscosSection() {
   const { data } = useProposalData();
 
+  const items = (data.riscosForm ?? []).filter((r) => r.descricao.trim());
+
   return (
     <section id="riscos" className={styles.section}>
       <div className={styles.container}>
@@ -32,28 +34,31 @@ export function RiscosSection() {
             <div className={styles.riscoHeaderCell}>Exposição</div>
             <div className={styles.riscoHeaderCell}>Responsável</div>
           </div>
-          {data.riscos.map((risco) => (
-            <div key={risco.identification} className={styles.riscoCard}>
-              <div className={styles.riscoCell}>
-                <div className={styles.riscoCellTitle}>Identificação</div>
-                {risco.identification}
+          {items.map((risco, i) => {
+            const level = risco.nivelExposicao.toLowerCase().replace('é', 'e');
+            return (
+              <div key={i} className={styles.riscoCard}>
+                <div className={styles.riscoCell}>
+                  <div className={styles.riscoCellTitle}>Identificação</div>
+                  {risco.descricao}
+                </div>
+                <div className={styles.riscoCell}>
+                  <div className={styles.riscoCellTitle}>Consequência</div>
+                  {risco.consequencias}
+                </div>
+                <div className={styles.riscoCell}>
+                  <div className={styles.riscoCellTitle}>Nível</div>
+                  <span className={`${styles.badge} ${BADGE_MAP[level] ?? ''}`}>
+                    {LEVEL_LABEL[level] ?? risco.nivelExposicao}
+                  </span>
+                </div>
+                <div className={styles.riscoCell}>
+                  <div className={styles.riscoCellTitle}>Resp.</div>
+                  {risco.responsavel}
+                </div>
               </div>
-              <div className={styles.riscoCell}>
-                <div className={styles.riscoCellTitle}>Consequência</div>
-                {risco.consequence}
-              </div>
-              <div className={styles.riscoCell}>
-                <div className={styles.riscoCellTitle}>Nível</div>
-                <span className={`${styles.badge} ${BADGE_MAP[risco.level]}`}>
-                  {LEVEL_LABEL[risco.level]}
-                </span>
-              </div>
-              <div className={styles.riscoCell}>
-                <div className={styles.riscoCellTitle}>Resp.</div>
-                {risco.responsible}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
