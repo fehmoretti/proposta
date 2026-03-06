@@ -278,19 +278,23 @@
 .fieldGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-s);
+  row-gap: var(--space-s);
+  column-gap: 16px;
 }
 
 .fieldGrid1 {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-s);
+  row-gap: var(--space-s);
+  column-gap: 16px;
 }
 
 .fieldGrid3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: var(--space-s);
+  row-gap: var(--space-s);
+  column-gap: 16px;
+  margin-top: 24px;
 }
 
 .fieldFull {

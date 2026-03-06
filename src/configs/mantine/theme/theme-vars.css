@@ -112,9 +112,14 @@
 .mantine-Textarea-input::placeholder,
 .mantine-NumberInput-input::placeholder,
 .mantine-Select-input::placeholder,
-.mantine-TextInput-input::placeholder {
+.mantine-TextInput-input::placeholder,
+.mantine-DatePickerInput-input::placeholder {
   color: #b2b2b9 !important;
   opacity: 1;
+}
+
+.mantine-DatePickerInput-placeholder {
+  color: #b2b2b9 !important;
 }
 
 /* ── Input background ── */
@@ -122,6 +127,55 @@
 .mantine-Textarea-input,
 .mantine-NumberInput-input,
 .mantine-Select-input,
-.mantine-TextInput-input {
+.mantine-TextInput-input,
+.mantine-DatePickerInput-input {
   background-color: #0000001a !important;
+}
+
+/* ── NumberInput controls (dark mode) ── */
+.mantine-NumberInput-control {
+  color: #b2b2b9 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.mantine-NumberInput-control:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.mantine-NumberInput-root {
+  width: 100%;
+}
+
+/* ── DatePicker dark mode ── */
+.mantine-DatePickerInput-day {
+  color: #EDEDED;
+}
+.mantine-DatePickerInput-day[data-outside] {
+  color: #9B9B9B;
+}
+.mantine-DatePickerInput-day:hover {
+  background: #2A2D34;
+}
+.mantine-DatePickerInput-day[data-selected] {
+  background: var(--mantine-color-red-filled) !important;
+  color: #fff !important;
+}
+.mantine-DatePickerInput-weekday {
+  color: #A5A5A5;
+}
+.mantine-DatePickerInput-calendarHeaderLevel {
+  color: #F5F5F5;
+}
+.mantine-DatePickerInput-calendarHeaderLevel:hover {
+  background: #2A2D34;
+}
+.mantine-DatePickerInput-calendarHeaderControl {
+  color: #D6D6D6;
+}
+.mantine-DatePickerInput-calendarHeaderControl:hover {
+  background: #2A2D34;
+}
+[data-dates-dropdown] {
+  background: #1D1C22 !important;
+  border-color: #2A2D34 !important;
 }

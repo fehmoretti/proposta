@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import type {
   ButtonProps,
   InputProps,
@@ -6,6 +7,7 @@ import type {
   ProgressProps,
   TabsProps,
 } from '@mantine/core';
+import { IconChevronDown } from '@tabler/icons-react';
 import { THEME_ACTIONICON, THEME_BUTTON, THEME_INPUT } from './theme.sizes';
 import {
   THEME_COLORS,
@@ -157,7 +159,6 @@ export const THEME_COMPONENTS = {
       thousandSeparator: '.',
       decimalSeparator: ',',
       decimalScale: 2,
-      inputWrapperOrder: ['label', 'input', 'description', 'error'] as const,
     },
     styles: inputLikeStyles,
   },
@@ -165,7 +166,6 @@ export const THEME_COMPONENTS = {
   TextInput: {
     defaultProps: {
       size: 'sm',
-      inputWrapperOrder: ['label', 'input', 'description', 'error'] as const,
     },
     styles: inputLikeStyles,
   },
@@ -173,7 +173,8 @@ export const THEME_COMPONENTS = {
   Select: {
     defaultProps: {
       size: 'sm',
-      inputWrapperOrder: ['label', 'input', 'description', 'error'] as const,
+      rightSection: createElement(IconChevronDown, { size: 16, color: THEME_COLORS.neutralLight[6] }),
+      rightSectionPointerEvents: 'none' as const,
     },
     styles: (_theme: MantineTheme, params: InputProps) => {
       const base = inputLikeStyles(_theme, params);
@@ -203,7 +204,6 @@ export const THEME_COMPONENTS = {
   Textarea: {
     defaultProps: {
       size: 'sm',
-      inputWrapperOrder: ['label', 'input', 'description', 'error'] as const,
     },
     styles: textareaStyles,
   },
@@ -215,9 +215,7 @@ export const THEME_COMPONENTS = {
   },
 
   ColorInput: {
-    defaultProps: {
-      inputWrapperOrder: ['label', 'input', 'description', 'error'] as const,
-    },
+    defaultProps: {},
     styles: inputLikeStyles,
   },
 

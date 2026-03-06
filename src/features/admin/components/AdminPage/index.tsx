@@ -12,6 +12,8 @@ import {
   Tooltip,
   Text,
 } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+import dayjs from 'dayjs';
 import type { ProposalFormData } from '@/features/proposal/services/proposal-form.types';
 import { DEFAULT_PROPOSAL } from '@/features/proposal/constants/proposal-defaults';
 import {
@@ -342,12 +344,22 @@ export function AdminPage({ slug }: AdminPageProps) {
                   value={form.responsavelProjeto}
                   onChange={(e) => set('responsavelProjeto', e.currentTarget.value)}
                 />
-                <TextInput
+                <DatePickerInput
                   label="1.5 — Data de elaboração"
-                  description="Preenchida automaticamente com a data atual"
-                  type="date"
-                  value={form.dataElaboracao}
-                  onChange={(e) => set('dataElaboracao', e.currentTarget.value)}
+                  placeholder="DD/MM/AAAA"
+                  leftSection={<IconCalendar size={16} color="#b2b2b9" />}
+                  locale="pt-br"
+                  valueFormat="DD/MM/YYYY"
+                  closeOnChange
+                  value={form.dataElaboracao ? dayjs(form.dataElaboracao).toDate() : null}
+                  onChange={(date: any) => {
+                    if (date) {
+                      set('dataElaboracao', dayjs(date).format('YYYY-MM-DD'));
+                    } else {
+                      set('dataElaboracao', '');
+                    }
+                  }}
+                  clearable
                 />
                 <Select
                   label="1.6 — Fonte de financiamento principal"
@@ -381,7 +393,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <RichTextArea
                   label="2.3 — Quais são os impactos mensuráveis do problema?"
-                  description="Ex: desperdício, retrabalho, erros"
                   placeholder="Ex: Desperdício de 18 kg de adesivo por turno de 8h, gerando custos adicionais de R$ X/mês"
                   value={form.impactosMensuraveis}
                   onChange={(val) => set('impactosMensuraveis', val)}
@@ -390,14 +401,12 @@ export function AdminPage({ slug }: AdminPageProps) {
               <div className={styles.fieldGrid3}>
                 <TextInput
                   label="Destaque — Valor"
-                  description="Número ou métrica principal do bloco de destaque"
                   placeholder="Ex: 18 kg"
                   value={form.contextoHighlightValue}
                   onChange={(e) => set('contextoHighlightValue', e.currentTarget.value)}
                 />
                 <TextInput
                   label="Destaque — Descrição"
-                  description="Texto complementar do destaque"
                   placeholder="Ex: de adesivo desperdiçado por turno de 8h"
                   value={form.contextoHighlightLabel}
                   onChange={(e) => set('contextoHighlightLabel', e.currentTarget.value)}
@@ -411,10 +420,9 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
               </div>
               {form.existeSolucaoPrevia && (
-                <div className={styles.fieldGrid1}>
+                <div className={styles.fieldGrid1} style={{ marginTop: 24 }}>
                   <RichTextArea
                     label="2.5 — Descreva o que já foi feito e quais limitações foram identificadas"
-                    description="Visível somente quando 2.4 = Sim"
                     placeholder="Ex: Foi testada uma solução manual de pesagem, mas sem integração com o sistema de controle"
                     value={form.descricaoSolucaoPrevia}
                     onChange={(val) => set('descricaoSolucaoPrevia', val)}
@@ -578,7 +586,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                 </div>
                 <NumberInput
                   label="3.2 — Prazo estimado de execução (meses)"
-                  description="Valor espelhado automaticamente no campo 8.1"
                   placeholder="Ex: 15"
                   withAsterisk
                   value={form.totalMonths}
@@ -623,7 +630,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                 <Select
                   label="4.2 — TRL final esperado"
                   placeholder="Selecione..."
-                  description="Deve ser ≥ TRL inicial"
                   withAsterisk
                   data={TRL_OPTIONS}
                   value={form.trlFinal || null}
@@ -767,7 +773,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                   <div className={styles.fieldFull}>
                     <RichTextArea
                       label="5.3 — Existem restrições de quantidade, modelos ou ambientes?"
-                      description='Ex: "Apenas 5 conjuntos de montagem serão considerados"'
                       placeholder="Ex: Validação limitada a 2 linhas de produção na unidade de Itapevi"
                       value={form.restricoesEscopo}
                       onChange={(val) => set('restricoesEscopo', val)}
@@ -839,7 +844,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                   <div className={styles.arrayItemFields}>
                     <NumberInput
                       label="6.1 — Número"
-                      description="Gerado automaticamente"
                       value={item.numero}
                       readOnly
                       allowDecimal={false}
@@ -886,10 +890,8 @@ export function AdminPage({ slug }: AdminPageProps) {
                         )
                       }
                     />
-                    <div />
                     <NumberInput
                       label="6.5 — Mês de início"
-                      description={`Entre 1 e ${form.totalMonths}`}
                       placeholder="Ex: 1"
                       value={item.mesInicio ?? ''}
                       onChange={(val) =>
@@ -906,7 +908,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                     />
                     <NumberInput
                       label="6.6 — Mês de término"
-                      description={`Entre 1 e ${form.totalMonths}. Deve ser ≥ mês de início`}
                       placeholder="Ex: 5"
                       value={item.mesTermino ?? ''}
                       onChange={(val) =>
@@ -1004,7 +1005,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                     />
                     <NumberInput
                       label="7.3 — Prazo (mês do projeto)"
-                      description={`Entre 1 e ${form.totalMonths}`}
                       placeholder="Ex: 3"
                       value={item.prazo ?? ''}
                       onChange={(val) =>
@@ -1031,7 +1031,6 @@ export function AdminPage({ slug }: AdminPageProps) {
               <div className={styles.fieldGrid}>
                 <NumberInput
                   label="8.1 — Duração total do projeto (meses)"
-                  description="Espelhado automaticamente do campo 3.2"
                   withAsterisk
                   value={form.totalMonths}
                   readOnly
@@ -1079,7 +1078,6 @@ export function AdminPage({ slug }: AdminPageProps) {
               <div className={styles.fieldGrid} style={{ marginTop: 18 }}>
                 <NumberInput
                   label="8.4 — Mês da entrega final"
-                  description={`Entre 1 e ${form.totalMonths}`}
                   placeholder="Ex: 15"
                   value={form.mesEntregaFinal ?? ''}
                   onChange={(val) =>
@@ -1157,7 +1155,6 @@ export function AdminPage({ slug }: AdminPageProps) {
               <div className={styles.fieldGrid}>
                 <NumberInput
                   label="9.1 — Contrapartida financeira da fonte principal (R$)"
-                  description={form.fonteFinanciamento ? `Fonte: ${form.fonteFinanciamento}` : 'Defina a fonte na Seção 1'}
                   placeholder="Ex: 500.000,00"
                   withAsterisk
                   prefix="R$ "
@@ -1172,7 +1169,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <TextInput
                   label="9.2 — Percentual da fonte principal (%)"
-                  description="Calculado automaticamente"
                   value={valorTotal > 0 ? `${pctFonte.toFixed(1)}%` : '—'}
                   readOnly
                 />
@@ -1192,7 +1188,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <TextInput
                   label="9.4 — Percentual do SENAI (%)"
-                  description="Calculado automaticamente"
                   value={valorTotal > 0 ? `${pctSenai.toFixed(1)}%` : '—'}
                   readOnly
                 />
@@ -1212,14 +1207,12 @@ export function AdminPage({ slug }: AdminPageProps) {
                 />
                 <TextInput
                   label="9.6 — Percentual da empresa (%)"
-                  description="Calculado automaticamente"
                   value={valorTotal > 0 ? `${pctEmpresa.toFixed(1)}%` : '—'}
                   readOnly
                 />
                 <div className={styles.fieldFull}>
                   <TextInput
                     label="9.7 — Valor total do projeto (R$)"
-                    description="Calculado automaticamente: 9.1 + 9.3 + 9.5"
                     value={valorTotal > 0 ? formatBRL(valorTotal) : '—'}
                     readOnly
                     styles={{
@@ -1448,7 +1441,6 @@ export function AdminPage({ slug }: AdminPageProps) {
                       />
                       <TextInput
                         label="11.4 — Custo total (R$)"
-                        description="Calculado: 11.2 × 11.3"
                         value={custoTotal != null ? formatBRL(custoTotal) : '—'}
                         readOnly
                       />

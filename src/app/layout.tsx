@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { MantineProvider } from '@/providers/MantineProvider';
 
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/tiptap/styles.css';
 import '@/configs/mantine/theme/theme-vars.css';
 
