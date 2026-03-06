@@ -4,6 +4,18 @@ import styles from '../ProposalPage.module.css';
 import { useProposalData } from '@/providers/ProposalDataProvider';
 import type { LegendItem } from '../../../services/proposal.types';
 
+const COLORS = ['#E8173A', '#FF6B6B', '#4ECDC4'];
+
+function formatBRL(val: number): string {
+  return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function formatShort(val: number): string {
+  if (val >= 1_000_000) return `R$${(val / 1_000_000).toFixed(1).replace('.0', '')}M`;
+  if (val >= 1_000) return `R$${Math.round(val / 1_000)}K`;
+  return `R$${val}`;
+}
+
 function DonutChart({ legend }: { readonly legend: LegendItem[] }) {
   const radius = 52;
   const circumference = 2 * Math.PI * radius;
@@ -40,6 +52,29 @@ function DonutChart({ legend }: { readonly legend: LegendItem[] }) {
 export function OrcamentoSection() {
   const { data } = useProposalData();
 
+  const fontePrincipal = data.valorFontePrincipal ?? 0;
+  const senai = data.valorSenai ?? 0;
+  const empresa = data.valorEmpresa ?? 0;
+  const total = fontePrincipal + senai + empresa;
+
+  const fonteLabel = data.fonteFinanciamento || 'Fonte Principal';
+
+  const pctFonte = total > 0 ? (fontePrincipal / total) * 100 : 0;
+  const pctSenai = total > 0 ? (senai / total) * 100 : 0;
+  const pctEmpresa = total > 0 ? (empresa / total) * 100 : 0;
+
+  const rows = [
+    { fonte: fonteLabel, financeira: formatBRL(fontePrincipal), economica: '—', percentage: Math.round(pctFonte) },
+    { fonte: 'SENAI', financeira: '—', economica: formatBRL(senai), percentage: Math.round(pctSenai) },
+    { fonte: 'Empresa', financeira: formatBRL(empresa), economica: '—', percentage: Math.round(pctEmpresa) },
+  ].filter((r) => r.percentage > 0);
+
+  const legend: LegendItem[] = [
+    { name: fonteLabel, percentage: Math.round(pctFonte), color: COLORS[0] },
+    { name: 'SENAI', percentage: Math.round(pctSenai), color: COLORS[1] },
+    { name: 'Empresa', percentage: Math.round(pctEmpresa), color: COLORS[2] },
+  ].filter((l) => l.percentage > 0);
+
   return (
     <section id="orcamento" className={styles.section}>
       <div className={styles.container}>
@@ -60,22 +95,22 @@ export function OrcamentoSection() {
               </tr>
             </thead>
             <tbody>
-              {data.orcamentoItems.map((item) => (
+              {rows.map((item) => (
                 <tr key={item.fonte}>
                   <td className={`${styles.orcamentoTableTd} ${styles.orcamentoFonte}`}>
                     {item.fonte}
                   </td>
                   <td className={`${styles.orcamentoTableTd} ${styles.orcamentoValor}`}>
-                    {item.financeira ?? '—'}
+                    {item.financeira}
                   </td>
                   <td className={`${styles.orcamentoTableTd} ${styles.orcamentoValor}`}>
-                    {item.economica ?? '—'}
+                    {item.economica}
                   </td>
                   <td className={styles.orcamentoTableTd}>
                     <div className={styles.pctBarWrap}>
                       <div className={styles.pctBar}>
                         <div
-                          className={`${styles.pctFill} ${item.percentage < 40 && item.fonte !== data.orcamentoLegend[0]?.name ? styles.pctFillMuted : ''}`}
+                          className={styles.pctFill}
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
@@ -92,7 +127,7 @@ export function OrcamentoSection() {
                   colSpan={2}
                   className={`${styles.orcamentoTableTd} ${styles.totalValor}`}
                 >
-                  {data.orcamentoTotal.formatted}
+                  {total > 0 ? formatBRL(total) : '—'}
                 </td>
                 <td className={styles.orcamentoTableTd}>
                   <div className={styles.pctBarWrap}>
@@ -109,12 +144,14 @@ export function OrcamentoSection() {
           {/* Card com Donut */}
           <div className={styles.orcamentoCard}>
             <div className={styles.orcamentoCardLabel}>Investimento Total</div>
-            <div className={styles.orcamentoCardValue}>{data.orcamentoTotal.value}</div>
+            <div className={styles.orcamentoCardValue}>
+              {total > 0 ? formatShort(total) : '—'}
+            </div>
 
-            <DonutChart legend={data.orcamentoLegend} />
+            {legend.length > 0 && <DonutChart legend={legend} />}
 
             <div className={styles.legend}>
-              {data.orcamentoLegend.map((item) => (
+              {legend.map((item) => (
                 <div key={item.name} className={styles.legendItem}>
                   <span
                     className={styles.legendDot}
