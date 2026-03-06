@@ -50,8 +50,10 @@ export function HeroSection() {
         <div className={styles.heroRight}>
           <div className={styles.heroGridPattern} />
           <div className={styles.heroAccent} />
-          <div className={styles.heroBgText}>{data.heroBgText}</div>
-          <div className={styles.heroNumber}>{data.heroNumber}</div>
+          <div className={styles.heroBgText}>
+            {data.heroBgText || data.siglaProjeto?.toUpperCase() || ''}
+          </div>
+          <div className={styles.heroNumber}>01</div>
         </div>
       </div>
     </section>
